@@ -12,7 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\" />
+    <PackageReference Include="MudBlazor" Version="7.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lionk.DS18B20\Lionk.DS18B20.csproj" />
   </ItemGroup>
 
 

@@ -1,0 +1,11 @@
+﻿@using Lionk.DS18B20
+@using MudBlazor
+
+@sensor?.Temperature
+
+@code {
+
+    [Parameter]
+    public DS18B20? sensor { get; set; }
+
+}

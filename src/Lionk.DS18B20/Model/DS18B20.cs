@@ -1,45 +1,48 @@
-﻿
+﻿// Copyright © 2024 Lionk Project
+
 using Lionk.Log;
-using Serilog.Core;
 
 namespace Lionk.DS18B20;
 
+/// <summary>
+/// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
+/// </summary>
 public class DS18B20
 {
-    private static readonly string Path = "/sys/bus/w1/devices/";
+    private static readonly string _path = "/sys/bus/w1/devices/";
 
-    private static readonly string SensorPattern = "28-";
+    private static readonly string _sensorPattern = "28-";
 
-    private static readonly IStandardLogger? Logger = LogService.CreateLogger("DS18B20");
-    
+    private static readonly IStandardLogger? _logger = LogService.CreateLogger("DS18B20");
+
     /// <summary>
     /// Static method to get the connected sensors.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> The connected sensors.</returns>
     public static List<string> ConnectedSensors()
     {
-        List<string> sensors = new List<string>();
-        foreach (string sensor in Directory.GetDirectories(Path))
-        { 
-            string Address = sensor.Split("/").Last();
-            if (Address.Contains(SensorPattern))
+        List<string> sensors = new();
+        foreach (string sensor in Directory.GetDirectories(_path))
+        {
+            string busAddress = sensor.Split("/").Last();
+            if (busAddress.Contains(_sensorPattern))
             {
-                sensors.Add(Address);
+                sensors.Add(busAddress);
             }
-
         }
+
         return sensors;
     }
 
     /// <summary>
     /// Gets the name of the sensor.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; private set; }
 
     /// <summary>
     /// Gets the address of the sensor.
     /// </summary>
-    public string Address { get; set; }
+    public string Address { get; private set; }
 
     /// <summary>
     /// Gets the temperature of the sensor.
@@ -52,13 +55,15 @@ public class DS18B20
     /// <remarks> <b>Null</b> if the sensor file does not exist or if the value is not read, <b>true</b> if the sensor is interfered, <b>false</b> otherwise.</remarks>
     public bool? IsInterfered { get; private set; }
 
-    DateTime LastRead { get; set; } = DateTime.MinValue;
+    /// <summary>
+    /// Gets the last read time of the sensor.
+    /// </summary>
+    public DateTime LastRead { get; private set; } = DateTime.MinValue;
 
     /// <summary>
     /// Gets the full path of the sensor file.
     /// </summary>
-
-    public string SensorFile => System.IO.Path.Combine(Path, Address, "w1_slave");
+    public string SensorFile => System.IO.Path.Combine(_path, Address, "w1_slave");
 
     /// <summary>
     /// Gets a value indicating whether the sensor file exists.
@@ -83,7 +88,7 @@ public class DS18B20
     {
         if (!Exists)
         {
-            Logger?.Log(LogSeverity.Debug, $"Sensor file does not exist: {SensorFile}");
+            _logger?.Log(LogSeverity.Debug, $"Sensor file does not exist: {SensorFile}");
             LogService.LogDebug($"Sensor file does not exist: {SensorFile}");
             Temperature = double.NaN;
             IsInterfered = null;
@@ -103,6 +108,10 @@ public class DS18B20
         LastRead = DateTime.Now;
     }
 
+    /// <summary>
+    /// Method to get the status of the sensor.
+    /// </summary>
+    /// <returns> The status of the sensor.</returns>
     public string GetSensorStatus()
     {
        string status = $@"
@@ -112,8 +121,7 @@ Exists:         {Exists}
 LastRead:       {LastRead}
 Temperature:    {Temperature} 
 IsInterfered:   {IsInterfered}";
-        return status;
+
+       return status;
     }
 }
-
-

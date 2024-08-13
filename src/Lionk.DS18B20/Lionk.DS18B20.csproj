@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\Lionk.DS18B20.Razor\Components\MudText.razor" Link="MudText.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Lionk.Logger" Version="1.0.0" />
     <PackageReference Include="Lionk.Utils" Version="1.0.0" />
   </ItemGroup>
