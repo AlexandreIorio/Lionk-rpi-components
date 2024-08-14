@@ -1,5 +1,6 @@
 ﻿// Copyright © 2024 Lionk Project
 
+using Lionk.Core.Component;
 using Lionk.Log;
 
 namespace Lionk.DS18B20;
@@ -7,13 +8,16 @@ namespace Lionk.DS18B20;
 /// <summary>
 /// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
 /// </summary>
-public class DS18B20
+public class DS18B20 : IMeasurableComponent<double>
 {
     private static readonly string _path = "/sys/bus/w1/devices/";
 
     private static readonly string _sensorPattern = "28-";
 
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("DS18B20");
+
+    /// <inheritdoc/>
+    public event EventHandler<MeasureEventArgs<double>>? NewValueAvailable;
 
     /// <summary>
     /// Static method to get the connected sensors.
@@ -35,19 +39,28 @@ public class DS18B20
     }
 
     /// <summary>
-    /// Gets the name of the sensor.
-    /// </summary>
-    public string Name { get; private set; }
-
-    /// <summary>
     /// Gets the address of the sensor.
     /// </summary>
     public string Address { get; private set; }
 
     /// <summary>
+    /// Gets or sets the type of the temperature.
+    /// </summary>
+    public TemperatureType TemperatureType { get; set; } = TemperatureType.Celsius;
+
+    /// <summary>
     /// Gets the temperature of the sensor.
     /// </summary>
-    public double Temperature { get; private set; } = double.NaN;
+    public double Temperature
+    {
+        get => Measures[(int)TemperatureType].Value;
+        private set
+        {
+            Measures[0].Value = value;
+            Measures[1].Value = (value * 9.0 / 5.0) + 32.0;
+            Measures[2].Value = value + 273.15;
+        }
+    }
 
     /// <summary>
     /// Gets a value indicating whether the sensor is interfered.
@@ -70,6 +83,17 @@ public class DS18B20
     /// </summary>
     public bool Exists => File.Exists(SensorFile);
 
+    /// <inheritdoc />
+    public List<Measure<double>> Measures { get; } = new()
+    {
+        new Measure<double>("Temperature", TemperatureType.Celsius.GetUnit()),
+        new Measure<double>("Temperature", TemperatureType.Fahrenheit.GetUnit()),
+        new Measure<double>("Temperature", TemperatureType.Kelvin.GetUnit()),
+    };
+
+    /// <inheritdoc />
+    public string? InstanceName { get; set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DS18B20"/> class.
     /// </summary>
@@ -77,7 +101,7 @@ public class DS18B20
     /// <param name="address"> The address of the sensor.</param>
     public DS18B20(string name, string address)
     {
-        Name = name;
+        InstanceName = name;
         Address = address;
     }
 
@@ -106,6 +130,7 @@ public class DS18B20
         Temperature = Convert.ToDouble(tempData) / 1000.0;
         IsInterfered = false;
         LastRead = DateTime.Now;
+        NewValueAvailable?.Invoke(this, new MeasureEventArgs<double>(Measures));
     }
 
     /// <summary>
@@ -115,11 +140,11 @@ public class DS18B20
     public string GetSensorStatus()
     {
        string status = $@"
-Sensor:         {Name}
+Sensor:         {InstanceName}
 Address:        {Address} 
 Exists:         {Exists}
 LastRead:       {LastRead}
-Temperature:    {Temperature} 
+Temperature:    {Temperature} {TemperatureType.GetUnit()} 
 IsInterfered:   {IsInterfered}";
 
        return status;
