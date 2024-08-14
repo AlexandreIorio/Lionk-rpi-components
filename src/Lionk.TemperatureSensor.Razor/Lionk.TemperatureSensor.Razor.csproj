@@ -25,6 +25,12 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Components\SimView.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 
 
 </Project>

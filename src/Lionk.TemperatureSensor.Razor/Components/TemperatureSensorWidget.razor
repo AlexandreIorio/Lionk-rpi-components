@@ -2,11 +2,11 @@
 @using Lionk.Core.Component
 @using Lionk.Core
 @using MudBlazor
+@inject IComponentService ComponentService
 @namespace Lionk.TemperatureSensor
 
 @attribute [NamedElement("Simulated Temperature sensor", "A simulated temperature sensor")]
 
-<MudText Typo="Typo.h6" Class="text-center">Temperature Sensor</MudText>
 @if (Sensor == null)
 {
     <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
@@ -14,9 +14,8 @@
 }
 else
 {
-
     <MudText Typo="Typo.h6" Class="text-center">@Sensor.InstanceName</MudText>
-    <MudCarousel ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" TData="Measure<Double>">
+    <MudCarousel ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" TData="Measure<Double>" AutoCycle="false">
         @foreach (var measure in Sensor.Measures)
         {
             <MudCarouselItem>
@@ -24,20 +23,17 @@ else
             </MudCarouselItem>
         }
     </MudCarousel>
+
+@*     <MudDialog>
+        <SensorList OnSelected=@Sensor"/>
+    </MudDialog> *@
 }
 
 @code {
     private bool _arrows = true;
     private bool _bullets = true;
     private bool _enableSwipeGesture = true;
+    public ITemperatureSensor? Sensor { get; set; }
 
-    [Parameter] public ITemperatureSensor? Sensor { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (Sensor != null)
-        {
-            Sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
-        }
-    }
+    // Implementer un dialog qui permet de définir le sensor.
 }
