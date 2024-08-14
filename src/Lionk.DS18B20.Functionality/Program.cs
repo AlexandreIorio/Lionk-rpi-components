@@ -5,8 +5,6 @@ class Program
 {
     static void Main(string[] args)
     {
-
-
         Console.WriteLine("DS18B20 Sensors - Starting");
         List<string> list = DS18B20.ConnectedSensors();
         List<DS18B20> sensors = new List<DS18B20>();

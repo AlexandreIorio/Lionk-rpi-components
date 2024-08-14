@@ -8,13 +8,33 @@ namespace Lionk.DS18B20;
 /// <summary>
 /// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
 /// </summary>
-public class DS18B20 : IMeasurableComponent<double>
+public class DS18B20 : ITemperatureSensor, ICyclicComponent
 {
     private static readonly string _path = "/sys/bus/w1/devices/";
 
     private static readonly string _sensorPattern = "28-";
 
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("DS18B20");
+
+    /// <inheritdoc/>
+    public TimeSpan ExecutionFrequency { get; set; }
+
+    /// <inheritdoc/>
+    public DateTime LastExecution { get; }
+
+    /// <inheritdoc/>
+    public int NbCycle { get; set; }
+
+    /// <inheritdoc/>
+    public DateTime StartedDate { get; set; }
+
+    /// <inheritdoc/>
+    public TimeSpan? Execute()
+    {
+        DateTime dateTime = DateTime.UtcNow;
+        Measure();
+        return DateTime.UtcNow - dateTime;
+    }
 
     /// <inheritdoc/>
     public event EventHandler<MeasureEventArgs<double>>? NewValueAvailable;
@@ -47,20 +67,6 @@ public class DS18B20 : IMeasurableComponent<double>
     /// Gets or sets the type of the temperature.
     /// </summary>
     public TemperatureType TemperatureType { get; set; } = TemperatureType.Celsius;
-
-    /// <summary>
-    /// Gets the temperature of the sensor.
-    /// </summary>
-    public double Temperature
-    {
-        get => Measures[(int)TemperatureType].Value;
-        private set
-        {
-            Measures[0].Value = value;
-            Measures[1].Value = (value * 9.0 / 5.0) + 32.0;
-            Measures[2].Value = value + 273.15;
-        }
-    }
 
     /// <summary>
     /// Gets a value indicating whether the sensor is interfered.
@@ -105,16 +111,14 @@ public class DS18B20 : IMeasurableComponent<double>
         Address = address;
     }
 
-    /// <summary>
-    /// Method to get the temperature of the sensor.
-    /// </summary>
-    public void ReadSensor()
+    /// <inheritdoc/>
+    public void Measure()
     {
         if (!Exists)
         {
             _logger?.Log(LogSeverity.Debug, $"Sensor file does not exist: {SensorFile}");
             LogService.LogDebug($"Sensor file does not exist: {SensorFile}");
-            Temperature = double.NaN;
+            SetTemperature(double.NaN);
             IsInterfered = null;
         }
 
@@ -122,16 +126,33 @@ public class DS18B20 : IMeasurableComponent<double>
         if (!lines[0].Contains("YES"))
         {
             LogService.LogDebug($"Sensor is interfered: {SensorFile}");
-            Temperature = double.NaN;
+            SetTemperature(double.NaN);
             IsInterfered = true;
         }
 
         string tempData = lines[1].Split('=')[1];
-        Temperature = Convert.ToDouble(tempData) / 1000.0;
+        SetTemperature(Convert.ToDouble(tempData) / 1000.0);
         IsInterfered = false;
         LastRead = DateTime.Now;
         NewValueAvailable?.Invoke(this, new MeasureEventArgs<double>(Measures));
     }
+
+    /// <summary>
+    /// This method is used to set the temperature of the sensor.
+    /// </summary>
+    /// <param name="value"> The value of the temperature.</param>
+    public void SetTemperature(double value)
+    {
+        Measures[0].Value = value;
+        Measures[1].Value = (value * 9.0 / 5.0) + 32.0;
+        Measures[2].Value = value + 273.15;
+    }
+
+    /// <summary>
+    /// This method is used to get the temperature of the sensor.
+    /// </summary>
+    /// <returns> The value of the temperature.</returns>
+    protected double GetTemperature() => Measures[(int)TemperatureType].Value;
 
     /// <summary>
     /// Method to get the status of the sensor.
@@ -144,7 +165,7 @@ Sensor:         {InstanceName}
 Address:        {Address} 
 Exists:         {Exists}
 LastRead:       {LastRead}
-Temperature:    {Temperature} {TemperatureType.GetUnit()} 
+Temperature:    {GetTemperature()} {TemperatureType.GetUnit()} 
 IsInterfered:   {IsInterfered}";
 
        return status;

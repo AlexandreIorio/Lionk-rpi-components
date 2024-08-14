@@ -16,7 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lionk.DS18B20\Lionk.DS18B20.csproj" />
+    <ProjectReference Include="..\Lionk.TemperatureSensor\Lionk.TemperatureSensor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Lionk.Core">
+      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 

@@ -1,0 +1,43 @@
+﻿@using Lionk.DS18B20
+@using Lionk.Core.Component
+@using Lionk.Core
+@using MudBlazor
+@namespace Lionk.TemperatureSensor
+
+@attribute [NamedElement("Simulated Temperature sensor", "A simulated temperature sensor")]
+
+<MudText Typo="Typo.h6" Class="text-center">Temperature Sensor</MudText>
+@if (Sensor == null)
+{
+    <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
+    return;
+}
+else
+{
+
+    <MudText Typo="Typo.h6" Class="text-center">@Sensor.InstanceName</MudText>
+    <MudCarousel ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" TData="Measure<Double>">
+        @foreach (var measure in Sensor.Measures)
+        {
+            <MudCarouselItem>
+                <MudText Typo="Typo.body1">@measure.Time?.ToString("dd.MM.yy") @Math.Round(measure.Value, 2) @measure.Unit </MudText>
+            </MudCarouselItem>
+        }
+    </MudCarousel>
+}
+
+@code {
+    private bool _arrows = true;
+    private bool _bullets = true;
+    private bool _enableSwipeGesture = true;
+
+    [Parameter] public ITemperatureSensor? Sensor { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Sensor != null)
+        {
+            Sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
+        }
+    }
+}
