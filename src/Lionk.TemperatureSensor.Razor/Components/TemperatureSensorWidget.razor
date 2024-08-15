@@ -1,6 +1,5 @@
-@using Lionk.DS18B20
-@using Lionk.Core.Component
 @using Lionk.Core
+@using Lionk.Core.Component
 @using Lionk.Core.Component.Configuration
 @using MudBlazor
 @inject IDialogService DialogService
@@ -25,8 +24,11 @@ else
 @code {
 
     [Parameter] public ITemperatureSensor? Sensor { get; set; }
+    
 
-    public Type ConfigurationType => typeof(SimulatedTemperatureSensorConfig);
+    public bool IsConfigurable => ConfigurationType != null;
+
+    public Type? ConfigurationType => ConfigurationView.GetConfigurationView(Sensor?.GetType());
 
     [Parameter]
     public string? InstanceName { get; set; }

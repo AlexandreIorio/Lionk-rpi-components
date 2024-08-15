@@ -2,9 +2,8 @@
 
 using Lionk.Core.Component;
 using Lionk.Log;
-using Lionk.TemperatureSensor;
 
-namespace Lionk.DS18B20;
+namespace Lionk.TemperatureSensor;
 
 /// <summary>
 /// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
@@ -18,7 +17,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("DS18B20");
 
     /// <inheritdoc/>
-    public TimeSpan ExecutionFrequency { get; set; }
+    public TimeSpan ExecutionFrequency { get; set; } = TimeSpan.FromSeconds(5);
 
     /// <inheritdoc/>
     public DateTime LastExecution { get; }
@@ -47,6 +46,12 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     public static List<string> ConnectedSensors()
     {
         List<string> sensors = new();
+        if (!Directory.Exists(_path))
+        {
+            _logger?.Log(LogSeverity.Debug, $"Path does not exist: {_path}");
+            return sensors;
+        }
+
         foreach (string sensor in Directory.GetDirectories(_path))
         {
             string busAddress = sensor.Split("/").Last();
@@ -60,9 +65,9 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     }
 
     /// <summary>
-    /// Gets the address of the sensor.
+    /// Gets or sets the address of the sensor.
     /// </summary>
-    public string Address { get; private set; }
+    public string Address { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the type of the temperature.
@@ -101,17 +106,6 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     /// <inheritdoc />
     public string? InstanceName { get; set; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DS18B20"/> class.
-    /// </summary>
-    /// <param name="name"> The name of the sensor.</param>
-    /// <param name="address"> The address of the sensor.</param>
-    public DS18B20(string name, string address)
-    {
-        InstanceName = name;
-        Address = address;
-    }
-
     /// <inheritdoc/>
     public void Measure()
     {
@@ -121,6 +115,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
             LogService.LogDebug($"Sensor file does not exist: {SensorFile}");
             SetTemperature(double.NaN);
             IsInterfered = null;
+            return;
         }
 
         string[] lines = File.ReadAllLines(SensorFile);
@@ -129,6 +124,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
             LogService.LogDebug($"Sensor is interfered: {SensorFile}");
             SetTemperature(double.NaN);
             IsInterfered = true;
+            return;
         }
 
         string tempData = lines[1].Split('=')[1];
