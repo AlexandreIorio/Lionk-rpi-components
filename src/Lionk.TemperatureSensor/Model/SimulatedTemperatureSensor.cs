@@ -1,7 +1,6 @@
 ﻿// Copyright © 2024 Lionk Project
 
 using Lionk.Core.Component;
-using Lionk.DS18B20;
 using Lionk.Log;
 
 namespace Lionk.TemperatureSensor;

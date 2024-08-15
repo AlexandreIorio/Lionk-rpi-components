@@ -1,0 +1,25 @@
+﻿@using Lionk.Core.Component
+@using MudBlazor
+@namespace Lionk.TemperatureSensor
+
+<MudTextField @bind-Value="_component.InstanceName" Label="Name" />
+<MudTextField @bind-Value="seconds" Label="Update frequency in s" T="int" />
+<MudRadioGroup @bind-Value="_component.TemperatureType">
+    @foreach (TemperatureType type in Enum.GetValues(typeof(TemperatureType)))
+    {
+        <MudRadio Value="@type">@type.GetUnit()</MudRadio>
+    }
+</MudRadioGroup>
+
+@code {
+    [Parameter] public SimulatedTemperatureSensor? Component { get; set; }
+    private SimulatedTemperatureSensor _component = new SimulatedTemperatureSensor();
+    private int seconds {get => _component.ExecutionFrequency.Seconds; set => _component.ExecutionFrequency = TimeSpan.FromSeconds(value);}
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ArgumentNullException.ThrowIfNull(Component);
+        _component = Component;
+    }
+}

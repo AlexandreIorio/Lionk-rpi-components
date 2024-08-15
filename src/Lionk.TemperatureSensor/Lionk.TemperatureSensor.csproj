@@ -7,14 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lionk.Logger" Version="1.0.0" />
-    <PackageReference Include="Lionk.Utils" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Lionk.Core">
-      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Core.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\Lionk\src\Lib\Lionk.Core\Lionk.Core.csproj" />
   </ItemGroup>
 
 </Project>

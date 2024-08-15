@@ -16,21 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Lionk\src\Lib\Lionk.Core.Razor\Lionk.Core.Razor.csproj" />
+    <ProjectReference Include="..\..\..\Lionk\src\Lib\Lionk.Core\Lionk.Core.csproj" />
     <ProjectReference Include="..\Lionk.TemperatureSensor\Lionk.TemperatureSensor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Lionk.Core">
-      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 
   <ItemGroup>
     <Content Update="Components\SimView.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>
-
-
 
 </Project>

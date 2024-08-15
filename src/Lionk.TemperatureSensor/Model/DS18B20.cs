@@ -2,6 +2,7 @@
 
 using Lionk.Core.Component;
 using Lionk.Log;
+using Lionk.TemperatureSensor;
 
 namespace Lionk.DS18B20;
 

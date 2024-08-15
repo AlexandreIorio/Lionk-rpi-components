@@ -3,7 +3,7 @@
 using Lionk.Core;
 using Lionk.Core.Component;
 
-namespace Lionk.DS18B20;
+namespace Lionk.TemperatureSensor;
 
 /// <summary>
 /// This interface is used to get the temperature of sensor connected to a Raspberry Pi.

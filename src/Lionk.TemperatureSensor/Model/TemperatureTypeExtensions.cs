@@ -1,6 +1,6 @@
 ﻿// Copyright © 2024 Lionk Project
 
-namespace Lionk.DS18B20;
+namespace Lionk.TemperatureSensor;
 
 /// <summary>
 /// This class extends the <see cref="TemperatureType"/> enumeration.

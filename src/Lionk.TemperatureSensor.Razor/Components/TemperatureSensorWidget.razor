@@ -1,39 +1,67 @@
-﻿@using Lionk.DS18B20
+@using Lionk.DS18B20
 @using Lionk.Core.Component
 @using Lionk.Core
+@using Lionk.Core.Component.Configuration
 @using MudBlazor
-@inject IComponentService ComponentService
+@inject IDialogService DialogService
+@implements IConfigurableComponent
+@implements IWidgetable
 @namespace Lionk.TemperatureSensor
 
-@attribute [NamedElement("Simulated Temperature sensor", "A simulated temperature sensor")]
+@attribute [NamedElement("Temperature sensor", "This widget represent the temperatures measures of a sensor")]
+
+<MudText Typo="Typo.h6" Class="text-center">Temperature Sensor</MudText>
 
 @if (Sensor == null)
 {
     <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
-    return;
 }
 else
 {
     <MudText Typo="Typo.h6" Class="text-center">@Sensor.InstanceName</MudText>
-    <MudCarousel ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" TData="Measure<Double>" AutoCycle="false">
-        @foreach (var measure in Sensor.Measures)
-        {
-            <MudCarouselItem>
-                <MudText Typo="Typo.body1">@measure.Time?.ToString("dd.MM.yy") @Math.Round(measure.Value, 2) @measure.Unit </MudText>
-            </MudCarouselItem>
-        }
-    </MudCarousel>
-
-@*     <MudDialog>
-        <SensorList OnSelected=@Sensor"/>
-    </MudDialog> *@
+    <MudText Typo="Typo.body1">@Sensor.Measures[(int)Sensor.TemperatureType].Time?.ToString("dd.MM.yy") @Math.Round(Sensor.Measures[(int)Sensor.TemperatureType].Value, 2) @Sensor.Measures[(int)Sensor.TemperatureType].Unit </MudText>
 }
 
 @code {
-    private bool _arrows = true;
-    private bool _bullets = true;
-    private bool _enableSwipeGesture = true;
-    public ITemperatureSensor? Sensor { get; set; }
 
-    // Implementer un dialog qui permet de définir le sensor.
+    [Parameter] public ITemperatureSensor? Sensor { get; set; }
+
+    public Type ConfigurationType => typeof(SimulatedTemperatureSensorConfig);
+
+    [Parameter]
+    public string? InstanceName { get; set; }
+
+    public async Task OpenConfiguration()
+    {
+        await OpenDialog();
+    }
+
+    private async Task OpenDialog()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("Component", Sensor);
+        parameters.Add("ConfigType", ConfigurationType);
+
+        var dialog = DialogService.Show<ConfigurationDialog>("Temperature sensor configuration", parameters);
+        DialogResult? result = await dialog.Result;
+
+        if (result is not null)
+        {
+            // Compenent save service
+            Sensor = result.Data as ITemperatureSensor;
+            StateHasChanged();
+        }
+        else
+        {
+
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Sensor != null)
+        {
+            Sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
+        }
+    }
 }
