@@ -1,9 +1,10 @@
 @using Lionk.Core
 @using Lionk.Core.Component
-@using Lionk.Core.Component.Configuration
+@using Lionk.Core.Component.Dialog
 @using MudBlazor
 @inject IDialogService DialogService
 @implements IConfigurableComponent
+@implements IDetailableComponent
 @implements IWidgetable
 @namespace Lionk.TemperatureSensor
 
@@ -25,26 +26,37 @@ else
 
     [Parameter] public ITemperatureSensor? Sensor { get; set; }
     
+    public Type? ConfigurationViewType => ComponentView.GetConfigurationView(Sensor?.GetType())?.View;
 
-    public bool IsConfigurable => ConfigurationType != null;
-
-    public Type? ConfigurationType => ConfigurationView.GetConfigurationView(Sensor?.GetType());
-
-    [Parameter]
-    public string? InstanceName { get; set; }
+    [Parameter] public string? InstanceName { get; set; }
 
     public async Task OpenConfiguration()
     {
-        await OpenDialog();
+        var parameters = new DialogParameters();
+        parameters.Add("Component", Sensor);
+        parameters.Add("ConfigType", ConfigurationViewType);
+
+        var dialog = DialogService.Show<ConfigurationDialog>("Temperature sensor configuration", parameters);
+        DialogResult? result = await dialog.Result;
+
+        if (result is not null)
+        {
+            // Compenent save service
+            Sensor = result.Data as ITemperatureSensor;
+            StateHasChanged();
+        }
+        else
+        {
+
+        }
     }
 
-    private async Task OpenDialog()
+    public async Task OpenDetail()
     {
         var parameters = new DialogParameters();
         parameters.Add("Component", Sensor);
-        parameters.Add("ConfigType", ConfigurationType);
 
-        var dialog = DialogService.Show<ConfigurationDialog>("Temperature sensor configuration", parameters);
+        var dialog = DialogService.Show<DetailDialog>("Temperature sensor detail", parameters);
         DialogResult? result = await dialog.Result;
 
         if (result is not null)
