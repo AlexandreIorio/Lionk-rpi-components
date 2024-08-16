@@ -8,14 +8,9 @@ namespace Lionk.Rpi.Gpio;
 /// <summary>
 /// This class represents a PWM GPIO component.
 /// </summary>
-public class PwmGpio : IGpio, IExecutableComponent, IDisposable
+public class PwmGpio : IExecutableComponent, IDisposable
 {
     private readonly PwmChannel _pwmChannel;
-
-    /// <summary>
-    /// Gets or sets the pin number of the GPIO component.
-    /// </summary>
-    public RaspberryPi4Pin Pin { get; set; } = RaspberryPi4Pin.GPIO18;
 
     /// <summary>
     /// Gets or sets the duty cycle of the PWM signal (0.0 to 1.0).
@@ -43,11 +38,6 @@ public class PwmGpio : IGpio, IExecutableComponent, IDisposable
     public string? InstanceName { get; set; }
 
     /// <summary>
-    /// Gets or sets the PWM chip of the GPIO component.
-    /// </summary>
-    public PwmChip PwmChip { get; set; } = PwmChip.Chip0;
-
-    /// <summary>
     /// Starts the PWM signal on the GPIO pin.
     /// </summary>
     public void StartPwm() => _pwmChannel.Start();
@@ -70,7 +60,7 @@ public class PwmGpio : IGpio, IExecutableComponent, IDisposable
     /// </summary>
     public PwmGpio()
     {
-        _pwmChannel = PwmChannel.Create((int)PwmChip, 0, Frequency, DutyCycle);
+        _pwmChannel = PwmChannel.Create(0, 0, Frequency, DutyCycle);
         Frequency = 400;
         DutyCycle = 0.5;
     }
@@ -82,20 +72,4 @@ public class PwmGpio : IGpio, IExecutableComponent, IDisposable
         _pwmChannel.Dispose();
         GC.SuppressFinalize(this);
     }
-}
-
-/// <summary>
-/// Represents the PWM channel type.
-/// </summary>
-public enum PwmChip
-{
-    /// <summary>
-    /// Represents the first PWM chip.
-    /// </summary>
-    Chip0 = 0,
-
-    /// <summary>
-    /// Represents the second PWM chip.
-    /// </summary>
-    Chip1 = 1,
 }
