@@ -1,0 +1,30 @@
+﻿@using Lionk.TemperatureSensor
+@rendermode InteractiveServer
+@page "/"
+<PageTitle>Home</PageTitle>
+<TemperatureSensorWidget Sensor="@TemperatureSensor"/>
+<MudButton OnClick="@click">clic</MudButton>
+
+
+@code {
+
+
+
+    private SimulatedTemperatureSensor? TemperatureSensor { get; set; }
+
+    protected override void OnInitialized()
+    {
+
+        TemperatureSensor = new SimulatedTemperatureSensor("Simulated Temperature Sensor", TimeSpan.FromSeconds(5));
+        TemperatureSensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
+
+    }
+
+    private void click()
+    {
+
+        TemperatureSensor?.Execute();
+    }
+
+    
+}

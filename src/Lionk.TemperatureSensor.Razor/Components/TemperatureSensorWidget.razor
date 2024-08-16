@@ -1,0 +1,83 @@
+@using Lionk.Core
+@using Lionk.Core.Component
+@using Lionk.Core.Component.Dialog
+@using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@implements IConfigurableComponent
+@implements IDetailableComponent
+@implements IWidgetable
+@namespace Lionk.TemperatureSensor
+
+@attribute [NamedElement("Temperature sensor", "This widget represent the temperatures measures of a sensor")]
+
+<MudText Typo="Typo.h6" Class="text-center">Temperature Sensor</MudText>
+
+@if (Sensor == null)
+{
+    <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
+}
+else
+{
+    <MudText Typo="Typo.h6" Class="text-center">@Sensor.InstanceName</MudText>
+    <MudText Typo="Typo.body1">@Sensor.Measures[(int)Sensor.TemperatureType].Time?.ToString("dd.MM.yy") @Math.Round(Sensor.Measures[(int)Sensor.TemperatureType].Value, 2) @Sensor.Measures[(int)Sensor.TemperatureType].Unit </MudText>
+}
+
+@code {
+
+    [Parameter] public ITemperatureSensor? Sensor { get; set; }
+
+    public Type? ConfigurationView => ComponentView.GetComponentView(Sensor?.GetType(), ComponentViewMode.Configuration)?.View;
+    public Type? DetailView => ComponentView.GetComponentView(Sensor?.GetType(), ComponentViewMode.Detail)?.View;
+
+    [Parameter] public string? InstanceName { get; set; }
+
+    public async Task OpenConfiguration()
+    {
+        if (Sensor is null || ConfigurationView is null)
+        {
+            Snackbar.Add("No configuration view available", Severity.Info);
+            return;
+        }
+        var parameters = new DialogParameters();
+        parameters.Add("Component", Sensor);
+        parameters.Add("ConfigType", ConfigurationView);
+
+        var dialog = DialogService.Show<ConfigurationDialog>("Temperature sensor configuration", parameters);
+        DialogResult? result = await dialog.Result;
+
+        if (result is not null)
+        {
+            // Compenent save service
+            Sensor = result.Data as ITemperatureSensor;
+            StateHasChanged();
+        }
+        else
+        {
+
+        }
+    }
+
+    public async Task OpenDetail()
+    {
+        if (Sensor is null || DetailView is null)
+        {
+            Snackbar.Add("No detail view available", Severity.Info);
+            return;
+        }
+        var parameters = new DialogParameters();
+        parameters.Add("Component", Sensor);
+        parameters.Add("ConfigType", DetailView);
+
+        var dialog = DialogService.Show<DetailDialog>("Temperature sensor detail", parameters);
+        DialogResult? result = await dialog.Result;
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Sensor != null)
+        {
+            Sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
+        }
+    }
+}
