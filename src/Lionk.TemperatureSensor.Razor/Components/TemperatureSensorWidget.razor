@@ -3,6 +3,7 @@
 @using Lionk.Core.Component.Dialog
 @using MudBlazor
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @implements IConfigurableComponent
 @implements IDetailableComponent
 @implements IWidgetable
@@ -25,16 +26,22 @@ else
 @code {
 
     [Parameter] public ITemperatureSensor? Sensor { get; set; }
-    
-    public Type? ConfigurationViewType => ComponentView.GetConfigurationView(Sensor?.GetType())?.View;
+
+    public Type? ConfigurationView => ComponentView.GetComponentView(Sensor?.GetType(), ComponentViewMode.Configuration)?.View;
+    public Type? DetailView => ComponentView.GetComponentView(Sensor?.GetType(), ComponentViewMode.Detail)?.View;
 
     [Parameter] public string? InstanceName { get; set; }
 
     public async Task OpenConfiguration()
     {
+        if (Sensor is null || ConfigurationView is null)
+        {
+            Snackbar.Add("No configuration view available", Severity.Info);
+            return;
+        }
         var parameters = new DialogParameters();
         parameters.Add("Component", Sensor);
-        parameters.Add("ConfigType", ConfigurationViewType);
+        parameters.Add("ConfigType", ConfigurationView);
 
         var dialog = DialogService.Show<ConfigurationDialog>("Temperature sensor configuration", parameters);
         DialogResult? result = await dialog.Result;
@@ -53,22 +60,17 @@ else
 
     public async Task OpenDetail()
     {
+        if (Sensor is null || DetailView is null)
+        {
+            Snackbar.Add("No detail view available", Severity.Info);
+            return;
+        }
         var parameters = new DialogParameters();
         parameters.Add("Component", Sensor);
+        parameters.Add("ConfigType", DetailView);
 
         var dialog = DialogService.Show<DetailDialog>("Temperature sensor detail", parameters);
         DialogResult? result = await dialog.Result;
-
-        if (result is not null)
-        {
-            // Compenent save service
-            Sensor = result.Data as ITemperatureSensor;
-            StateHasChanged();
-        }
-        else
-        {
-
-        }
     }
 
     protected override void OnInitialized()
