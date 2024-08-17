@@ -16,9 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Lionk.Core">
-      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

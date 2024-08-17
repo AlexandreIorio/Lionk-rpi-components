@@ -11,15 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Lionk.Core">
-      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Lionk.Logger">
-      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Logger.dll</HintPath>
-    </Reference>
-    <Reference Include="Lionk.Utils">
-      <HintPath>..\..\..\Lionk\src\Lib\Lionk.Core\bin\Debug\net8.0\Lionk.Utils.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\Lionk\src\Lib\Lionk.Core.Razor\Lionk.Core.Razor.csproj" />
+    <ProjectReference Include="..\..\Lionk\src\Lib\Lionk.Core\Lionk.Core.csproj" />
   </ItemGroup>
 
 </Project>

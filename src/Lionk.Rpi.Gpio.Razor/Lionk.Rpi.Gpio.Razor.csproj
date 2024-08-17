@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Lionk\src\Lib\Lionk.Core.Razor\Lionk.Core.Razor.csproj" />
+    <ProjectReference Include="..\..\Lionk\src\Lib\Lionk.Core\Lionk.Core.csproj" />
     <ProjectReference Include="..\Lionk.Rpi.Gpio\Lionk.Rpi.Gpio.csproj" />
   </ItemGroup>
 
