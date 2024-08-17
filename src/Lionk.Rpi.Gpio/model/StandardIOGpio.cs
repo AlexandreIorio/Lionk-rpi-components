@@ -1,13 +1,14 @@
 ﻿// Copyright © 2024 Lionk Project
 
 using System.Device.Gpio;
+using Lionk.Core.Component;
 
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
 /// This class represents a standard input/output GPIO component.
 /// </summary>
-public abstract class StandardIOGpio : IGpio
+public abstract class StandardIOGpio : IGpio, IMeasurableComponent<int>
 {
     /// <summary>
     /// Gets the pin number of the GPIO component.
@@ -26,6 +27,14 @@ public abstract class StandardIOGpio : IGpio
 
     /// <inheritdoc/>
     public string? InstanceName { get; set; }
+
+    /// <summary>
+    /// Gets the measures of the GPIO component.
+    /// </summary>
+    public List<Measure<int>> Measures { get; } = new();
+
+    /// <inheritdoc/>
+    public event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
 
     /// <summary>
     /// Opens the GPIO pin.
@@ -50,6 +59,11 @@ public abstract class StandardIOGpio : IGpio
         Controller.Dispose();
         GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// Measures the value of the GPIO pin.
+    /// </summary>
+    public abstract void Measure();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StandardIOGpio"/> class.

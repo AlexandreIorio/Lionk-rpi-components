@@ -1,0 +1,35 @@
+﻿@using MudBlazor
+@using Lionk.Core
+@namespace Lionk.Rpi.Gpio
+
+<h3>StandardGpioWidget</h3>
+@if (_value)
+{
+    <MudChip T="string" Color="Color.Success">Active</MudChip>
+}
+else
+{
+    <MudChip T="string" Color="Color.Dark">Inactive</MudChip>
+
+}
+
+@code {
+    private bool _value = false;
+
+    [Parameter] StandardIOGpio? Gpio { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Gpio != null)
+        {
+            Gpio.NewValueAvailable += GpioNewValueAvailable;
+        }
+    }
+
+    public void GpioNewValueAvailable(object sender, MeasureEventArgs<int> e)
+    {
+        _value = value;
+        StateHasChanged();
+    }
+}

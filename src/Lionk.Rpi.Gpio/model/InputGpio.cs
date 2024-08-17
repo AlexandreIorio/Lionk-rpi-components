@@ -8,17 +8,12 @@ namespace Lionk.Rpi.Gpio;
 /// <summary>
 /// This class represents an input GPIO component.
 /// </summary>
-public class InputGpio : StandardIOGpio, IExecutableComponent, IMeasurableComponent<int>
+public class InputGpio : StandardIOGpio, IExecutableComponent
 {
-    /// <summary>
-    /// Gets the measures of the GPIO component.
-    /// </summary>
-    public List<Measure<int>> Measures { get; } = new();
-
     /// <summary>
     /// Occurs when a new value is available.
     /// </summary>
-    public event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
+    public new event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InputGpio"/> class.
@@ -52,7 +47,7 @@ public class InputGpio : StandardIOGpio, IExecutableComponent, IMeasurableCompon
     /// <summary>
     /// Measures the value of the GPIO pin.
     /// </summary>
-    public void Measure()
+    public override void Measure()
     {
         int value = (int)ReadPin();
         if (Measures[0].Value != value)

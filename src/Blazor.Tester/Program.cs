@@ -1,6 +1,6 @@
 // Copyright © 2024 Lionk Project
 
-using Lionk.rpi.Tester.Components;
+using Blazor.Tester.Components;
 using MudBlazor.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

@@ -1,5 +1,6 @@
 ﻿// Copyright © 2024 Lionk Project
 
+using Lionk.Core;
 using Lionk.Core.Component;
 using Lionk.Log;
 
@@ -8,6 +9,7 @@ namespace Lionk.TemperatureSensor;
 /// <summary>
 /// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
 /// </summary>
+[NamedElement("DS18B20", "A DS18B20 temperature sensor")]
 public class DS18B20 : ITemperatureSensor, ICyclicComponent
 {
     private static readonly string _path = "/sys/bus/w1/devices/";
@@ -20,7 +22,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     public TimeSpan ExecutionFrequency { get; set; } = TimeSpan.FromSeconds(5);
 
     /// <inheritdoc/>
-    public DateTime LastExecution { get; }
+    public DateTime LastExecution { get; set; }
 
     /// <inheritdoc/>
     public int NbCycle { get; set; }
@@ -98,9 +100,9 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     /// <inheritdoc />
     public List<Measure<double>> Measures { get; } = new()
     {
-        new Measure<double>("Temperature", TemperatureType.Celsius.GetUnit()),
-        new Measure<double>("Temperature", TemperatureType.Fahrenheit.GetUnit()),
-        new Measure<double>("Temperature", TemperatureType.Kelvin.GetUnit()),
+        new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Celsius.GetUnit(), double.NaN),
+        new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Fahrenheit.GetUnit(), double.NaN),
+        new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Kelvin.GetUnit(), double.NaN),
     };
 
     /// <inheritdoc />
@@ -140,9 +142,25 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     /// <param name="value"> The value of the temperature.</param>
     public void SetTemperature(double value)
     {
-        Measures[0].Value = value;
-        Measures[1].Value = (value * 9.0 / 5.0) + 32.0;
-        Measures[2].Value = value + 273.15;
+        double celsius = value;
+        double fahrenheit = (value * 9.0 / 5.0) + 32.0;
+        double kelvin = value + 273.15;
+
+        Measures[(int)TemperatureType.Celsius] = new Measure<double>(
+            "Temperature",
+            DateTime.UtcNow,
+            TemperatureType.Celsius.GetUnit(),
+            celsius);
+        Measures[(int)TemperatureType.Fahrenheit] = new Measure<double>(
+            "Temperature",
+            DateTime.UtcNow,
+            TemperatureType.Fahrenheit.GetUnit(),
+            fahrenheit);
+        Measures[(int)TemperatureType.Kelvin] = new Measure<double>(
+            "Temperature",
+            DateTime.UtcNow,
+            TemperatureType.Kelvin.GetUnit(),
+            kelvin);
     }
 
     /// <summary>
