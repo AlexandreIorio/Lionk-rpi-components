@@ -11,19 +11,11 @@ namespace Lionk.Rpi.Gpio;
 public class InputGpio : StandardIOGpio, IExecutableComponent
 {
     /// <summary>
-    /// Occurs when a new value is available.
-    /// </summary>
-    public new event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="InputGpio"/> class.
     /// </summary>
     public InputGpio()
         : base()
-    {
-        Mode = PinMode.Input;
-        Measures.Add(new Measure<int>("Read", string.Empty));
-    }
+        => Mode = PinMode.Input;
 
     /// <summary>
     /// Reads the value of the GPIO pin.
@@ -50,10 +42,8 @@ public class InputGpio : StandardIOGpio, IExecutableComponent
     public override void Measure()
     {
         int value = (int)ReadPin();
-        if (Measures[0].Value != value)
-        {
-            Measures[0].Value = value;
-            NewValueAvailable?.Invoke(this, new MeasureEventArgs<int>(Measures));
-        }
+        Measures.Clear();
+        Measures.Add(new Measure<int>("value", DateTime.Now, "state", value));
+        OnNewValueAvailable(new MeasureEventArgs<int>(Measures));
     }
 }

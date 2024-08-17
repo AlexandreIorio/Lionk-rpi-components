@@ -11,11 +11,6 @@ namespace Lionk.Rpi.Gpio;
 public class OutputGpio : StandardIOGpio, IExecutableComponent
 {
     /// <summary>
-    /// Occurs when a new value is available.
-    /// </summary>
-    public new event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
-
-    /// <summary>
     /// Gets or sets the value of the GPIO pin.
     /// </summary>
     public PinValue PinValue { get; set; }
@@ -38,11 +33,9 @@ public class OutputGpio : StandardIOGpio, IExecutableComponent
     /// <inheritdoc/>
     public override void Measure()
     {
-        if (Measures[0].Value != (int)PinValue)
-        {
-            Measures[0].Value = (int)PinValue;
-            NewValueAvailable?.Invoke(this, new MeasureEventArgs<int>(Measures));
-        }
+        Measures.Clear();
+        Measures.Add(new Measure<int>("value", DateTime.Now, "state", (int)PinValue));
+        OnNewValueAvailable(new MeasureEventArgs<int>(Measures));
     }
 
     /// <summary>

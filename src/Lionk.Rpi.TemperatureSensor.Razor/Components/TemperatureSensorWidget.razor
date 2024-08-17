@@ -30,8 +30,6 @@ else
 
 @code {
 
-    public override Type? ComponentType => typeof(ITemperatureSensor);
-
     public Type? ConfigurationView =>
         ComponentView.GetComponentView(
             Component?.GetType(),

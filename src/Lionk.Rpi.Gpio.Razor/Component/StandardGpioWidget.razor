@@ -1,9 +1,11 @@
-﻿@using MudBlazor
+﻿@using Lionk.Core.Component
+@using MudBlazor
 @using Lionk.Core
 @namespace Lionk.Rpi.Gpio
 
 <h3>StandardGpioWidget</h3>
-@if (_value)
+
+@if (_value > 0)
 {
     <MudChip T="string" Color="Color.Success">Active</MudChip>
 }
@@ -14,9 +16,10 @@ else
 }
 
 @code {
-    private bool _value = false;
+    // TODO ALEX pas sûr de ce que je fais ici si value est vraiment un int.
+    private int _value = 0;
 
-    [Parameter] StandardIOGpio? Gpio { get; set; }
+    [Parameter] public StandardIOGpio? Gpio { get; set; }
 
     protected override void OnInitialized()
     {
@@ -27,9 +30,11 @@ else
         }
     }
 
-    public void GpioNewValueAvailable(object sender, MeasureEventArgs<int> e)
+    public void GpioNewValueAvailable(object? sender, MeasureEventArgs<int> e)
     {
-        _value = value;
+        if (e is null) return;
+
+        _value = e.Measures.First().Value;
         StateHasChanged();
     }
 }

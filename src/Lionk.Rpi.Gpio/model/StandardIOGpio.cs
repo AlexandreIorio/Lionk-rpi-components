@@ -69,4 +69,11 @@ public abstract class StandardIOGpio : IGpio, IMeasurableComponent<int>
     /// Initializes a new instance of the <see cref="StandardIOGpio"/> class.
     /// </summary>
     public StandardIOGpio() => Controller = new GpioController();
+
+    /// <summary>
+    /// Raises the <see cref="NewValueAvailable"/> event.
+    /// </summary>
+    /// <param name="e">The event arg.</param>
+    protected void OnNewValueAvailable(MeasureEventArgs<int> e)
+        => NewValueAvailable?.Invoke(this, e);
 }
