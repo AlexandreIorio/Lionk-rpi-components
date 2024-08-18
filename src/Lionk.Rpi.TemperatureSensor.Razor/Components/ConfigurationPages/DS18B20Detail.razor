@@ -1,7 +1,8 @@
 ﻿@using Lionk.Core.Component
+@using Lionk.Core.View
 @using Lionk.TemperatureSensor
 @using MudBlazor
-@attribute [ComponentView("DS18B20 détail view", typeof(DS18B20), typeof(DS18B20Detail), ComponentViewMode.Detail)]
+@attribute [ViewOfAttribute("DS18B20 détail view", typeof(DS18B20), typeof(DS18B20Detail), ViewContext.Detail)]
 
 <MudText Typo="Typo.h3">DS18B20 temperature Sensor</MudText>
 <MudText Typo="Typo.h5">@_component.InstanceName</MudText>

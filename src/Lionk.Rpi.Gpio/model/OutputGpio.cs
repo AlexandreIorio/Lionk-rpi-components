@@ -2,6 +2,7 @@
 
 using System.Device.Gpio;
 using Lionk.Core.Component;
+using Lionk.Core.DataModel;
 
 namespace Lionk.Rpi.Gpio;
 

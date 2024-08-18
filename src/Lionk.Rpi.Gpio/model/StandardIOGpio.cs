@@ -2,6 +2,7 @@
 
 using System.Device.Gpio;
 using Lionk.Core.Component;
+using Lionk.Core.DataModel;
 
 namespace Lionk.Rpi.Gpio;
 
@@ -26,12 +27,12 @@ public abstract class StandardIOGpio : IGpio, IMeasurableComponent<int>
     public RaspberryPi4Pin Pin { get; set; }
 
     /// <inheritdoc/>
-    public string? InstanceName { get; set; }
+    public string InstanceName { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the measures of the GPIO component.
     /// </summary>
-    public List<Measure<int>> Measures { get; } = new();
+    public List<Measure<int>> Measures { get; } = [];
 
     /// <inheritdoc/>
     public event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;

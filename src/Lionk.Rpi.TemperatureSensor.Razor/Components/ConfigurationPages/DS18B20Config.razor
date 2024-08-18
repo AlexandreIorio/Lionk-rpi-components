@@ -1,8 +1,9 @@
 ﻿@using Lionk.Core.Component
 @using Lionk.Core.Component.Dialog
+@using Lionk.Core.View
 @using MudBlazor
 @namespace Lionk.TemperatureSensor
-@attribute [ComponentView("DS18B20 Configuration", typeof(DS18B20), typeof(DS18B20Config), ComponentViewMode.Configuration)]
+@attribute [ViewOfAttribute("DS18B20 Configuration", typeof(DS18B20), typeof(DS18B20Config), ViewContext.Configuration)]
 
 <MudTextField @bind-Value="_component.InstanceName" Label="Name" />
 <MudTextField @bind-Value="seconds" Label="Update frequency in s" T="int"/>

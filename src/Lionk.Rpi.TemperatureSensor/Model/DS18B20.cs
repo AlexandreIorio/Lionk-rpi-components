@@ -2,6 +2,7 @@
 
 using Lionk.Core;
 using Lionk.Core.Component;
+using Lionk.Core.DataModel;
 using Lionk.Log;
 
 namespace Lionk.TemperatureSensor;
@@ -47,7 +48,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     /// <returns> The connected sensors.</returns>
     public static List<string> ConnectedSensors()
     {
-        List<string> sensors = new();
+        List<string> sensors = [];
         if (!Directory.Exists(_path))
         {
             _logger?.Log(LogSeverity.Debug, $"Path does not exist: {_path}");
@@ -98,15 +99,15 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     public bool Exists => File.Exists(SensorFile);
 
     /// <inheritdoc />
-    public List<Measure<double>> Measures { get; } = new()
-    {
+    public List<Measure<double>> Measures { get; } =
+    [
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Celsius.GetUnit(), double.NaN),
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Fahrenheit.GetUnit(), double.NaN),
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Kelvin.GetUnit(), double.NaN),
-    };
+    ];
 
     /// <inheritdoc />
-    public string? InstanceName { get; set; }
+    public string InstanceName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
     public void Measure()
@@ -175,7 +176,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     /// <returns> The status of the sensor.</returns>
     public string GetSensorStatus()
     {
-       string status = $@"
+        string status = $@"
 Sensor:         {InstanceName}
 Address:        {Address} 
 Exists:         {Exists}
@@ -183,6 +184,6 @@ LastRead:       {LastRead}
 Temperature:    {GetTemperature()} {TemperatureType.GetUnit()} 
 IsInterfered:   {IsInterfered}";
 
-       return status;
+        return status;
     }
 }

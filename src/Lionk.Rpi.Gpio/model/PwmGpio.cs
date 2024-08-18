@@ -35,7 +35,7 @@ public class PwmGpio : IExecutableComponent, IDisposable
     public int Frequency { get => _pwmChannel?.Frequency ?? 0; set => _pwmChannel.Frequency = value; }
 
     /// <inheritdoc/>
-    public string? InstanceName { get; set; }
+    public string InstanceName { get; set; } = string.Empty;
 
     /// <summary>
     /// Starts the PWM signal on the GPIO pin.

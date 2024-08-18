@@ -2,6 +2,7 @@
 
 using Lionk.Core;
 using Lionk.Core.Component;
+using Lionk.Core.DataModel;
 using Lionk.Log;
 
 namespace Lionk.TemperatureSensor;
@@ -49,15 +50,15 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ICyclicComponent
     public DateTime LastRead { get; private set; } = DateTime.MinValue;
 
     /// <inheritdoc />
-    public List<Measure<double>> Measures { get; } = new()
-    {
+    public List<Measure<double>> Measures { get; } =
+    [
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Celsius.GetUnit(), double.NaN),
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Fahrenheit.GetUnit(), double.NaN),
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Kelvin.GetUnit(), double.NaN),
-    };
+    ];
 
     /// <inheritdoc />
-    public string? InstanceName { get; set; }
+    public string InstanceName { get; set; } = string.Empty;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SimulatedTemperatureSensor"/> class.
