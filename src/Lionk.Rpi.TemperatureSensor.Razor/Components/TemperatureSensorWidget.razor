@@ -5,15 +5,11 @@
 @using MudBlazor
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
-@implements IConfigurableComponent
-@implements IDetailableComponent
-@inherits Widget
 @namespace Lionk.TemperatureSensor
-
-@attribute [NamedElement("Temperature sensor widget", "This widget represent the temperatures measures of a sensor")]
+@attribute [ComponentView("Simple temperature widget", typeof(ITemperatureSensor), typeof(TemperatureSensorWidget), ComponentViewMode.Widget)]
 
 <MudText Typo="Typo.h6" Class="text-center">Temperature Sensor</MudText>
-
+y
 @if (Component is null)
 {
     <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
@@ -29,53 +25,8 @@ else
 }
 
 @code {
-    public override Type ComponentType => typeof(ITemperatureSensor);
-    public Type? ConfigurationView =>
-    ComponentView.GetComponentView(
-            Component?.GetType(),
-            ComponentViewMode.Configuration)?
-            .View;
-    public Type? DetailView =>
-        ComponentView.GetComponentView(
-            Component?.GetType(),
-            ComponentViewMode.Detail)?
-            .View;
 
-    public async Task OpenConfigurationAsync()
-    {
-        if (Component is null || ConfigurationView is null)
-        {
-            Snackbar.Add("No configuration view available", Severity.Info);
-            return;
-        }
-        var parameters = new DialogParameters();
-        parameters.Add("Component", Component);
-        parameters.Add("ConfigType", ConfigurationView);
-
-        var dialog = DialogService.Show<ConfigurationDialog>("Temperature sensor configuration", parameters);
-        DialogResult? result = await dialog.Result;
-
-        if (result is not null)
-        {
-            Component = result.Data as ITemperatureSensor;
-            StateHasChanged();
-        }
-    }
-
-    public async Task OpenDetailAsync()
-    {
-        if (Component is null || DetailView is null)
-        {
-            Snackbar.Add("No detail view available", Severity.Info);
-            return;
-        }
-        var parameters = new DialogParameters();
-        parameters.Add("Component", Component);
-        parameters.Add("ConfigType", DetailView);
-
-        var dialog = DialogService.Show<DetailDialog>("Temperature sensor detail", parameters);
-        DialogResult? result = await dialog.Result;
-    }
+    [Parameter] public ITemperatureSensor? Component { get; set; }
 
     protected override void OnInitialized()
     {
