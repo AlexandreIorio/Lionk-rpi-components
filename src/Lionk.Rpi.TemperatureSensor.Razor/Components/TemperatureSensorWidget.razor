@@ -2,15 +2,12 @@
 @using Lionk.Core.View
 @using Lionk.TemperatureSensor
 @using Lionk.Core.Component
-@using Lionk.Core.Component.Dialog
 @using MudBlazor
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @namespace Lionk.TemperatureSensor
 @attribute [ViewOfAttribute("Simple temperature widget", typeof(ITemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
 
-<MudText Typo="Typo.h6" Class="text-center">Temperature Sensor</MudText>
-y
 @if (Component is null)
 {
     <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
@@ -19,7 +16,7 @@ else
 {
     if (Component is ITemperatureSensor sensor)
     {
-        <MudText Typo="Typo.h6" Class="text-center">@sensor.InstanceName</MudText>
+        <MudText Typo="Typo.h6" Class="bi bi-thermometer-half text-center">@sensor.InstanceName</MudText>
         <MudText Typo="Typo.body1">@GetTemperature()</MudText>
         <MudText Typo="Typo.body1"> Last read @GetTime()</MudText>
     }
