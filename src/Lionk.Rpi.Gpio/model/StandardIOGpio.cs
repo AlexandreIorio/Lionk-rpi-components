@@ -29,6 +29,9 @@ public abstract class StandardIOGpio : IGpio, IMeasurableComponent<int>
     /// <inheritdoc/>
     public string InstanceName { get; set; } = string.Empty;
 
+    /// <inheritdoc/>
+    public Guid UniqueID { get; } = Guid.NewGuid();
+
     /// <summary>
     /// Gets the measures of the GPIO component.
     /// </summary>

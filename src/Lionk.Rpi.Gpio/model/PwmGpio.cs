@@ -37,6 +37,9 @@ public class PwmGpio : IExecutableComponent, IDisposable
     /// <inheritdoc/>
     public string InstanceName { get; set; } = string.Empty;
 
+    /// <inheritdoc/>
+    public Guid UniqueID { get; } = Guid.NewGuid();
+
     /// <summary>
     /// Starts the PWM signal on the GPIO pin.
     /// </summary>
