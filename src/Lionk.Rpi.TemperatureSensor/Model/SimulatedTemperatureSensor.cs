@@ -3,6 +3,7 @@
 using Lionk.Core;
 using Lionk.Core.Component;
 using Lionk.Core.DataModel;
+using Lionk.Core.Observable;
 using Lionk.Log;
 
 namespace Lionk.TemperatureSensor;
@@ -11,13 +12,89 @@ namespace Lionk.TemperatureSensor;
 /// This class is used to simulate the temperature sensor.
 /// </summary>
 [NamedElement("Simulated sensor", "This is a simulated sensor to test gui")]
-public class SimulatedTemperatureSensor : ITemperatureSensor, ICyclicComponent
+public class SimulatedTemperatureSensor : ObservableElement, ITemperatureSensor, ICyclicComponent
 {
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("SimulatedTemperatureSensor");
     private readonly Random _random = new();
 
+    #region Observable Properties
+
+    private string _instanceName = string.Empty;
+    private Guid _id = Guid.NewGuid();
+    private TimeSpan _executionFrequency = TimeSpan.FromSeconds(5);
+    private string _address = string.Empty;
+    private TemperatureType _temperatureType = TemperatureType.Celsius;
+    private DateTime _lastRead = DateTime.MinValue;
+    private double _minSimulatedTemperature;
+    private double _maxSimulatedTemperature;
+
     /// <inheritdoc/>
-    public TimeSpan ExecutionFrequency { get; set; }
+    public string InstanceName
+    {
+        get => _instanceName;
+        set => SetField(ref _instanceName, value);
+    }
+
+    /// <inheritdoc/>
+    public Guid Id
+    {
+        get => _id;
+        set => SetField(ref _id, value);
+    }
+
+    /// <inheritdoc/>
+    public TimeSpan ExecutionFrequency
+    {
+        get => _executionFrequency;
+        set => SetField(ref _executionFrequency, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the address of the sensor.
+    /// </summary>
+    public string Address
+    {
+        get => _address;
+        set => SetField(ref _address, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the type of the temperature.
+    /// </summary>
+    public TemperatureType TemperatureType
+    {
+        get => _temperatureType;
+        set => SetField(ref _temperatureType, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the last read time of the sensor.
+    /// </summary>
+    public DateTime LastRead
+    {
+        get => _lastRead;
+        set => SetField(ref _lastRead, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the minimum simulated temperature.
+    /// </summary>
+    public double MinSimulatedTemperature
+    {
+        get => _minSimulatedTemperature;
+        set => SetField(ref _minSimulatedTemperature, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum simulated temperature.
+    /// </summary>
+    public double MaxSimulatedTemperature
+    {
+        get => _maxSimulatedTemperature;
+        set => SetField(ref _maxSimulatedTemperature, value);
+    }
+
+    #endregion
 
     /// <inheritdoc/>
     public DateTime LastExecution { get; set; }
@@ -39,16 +116,6 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ICyclicComponent
     /// <inheritdoc/>
     public event EventHandler<MeasureEventArgs<double>>? NewValueAvailable;
 
-    /// <summary>
-    /// Gets or sets the type of the temperature.
-    /// </summary>
-    public TemperatureType TemperatureType { get; set; } = TemperatureType.Celsius;
-
-    /// <summary>
-    /// Gets the last read time of the sensor.
-    /// </summary>
-    public DateTime LastRead { get; private set; } = DateTime.MinValue;
-
     /// <inheritdoc />
     public List<Measure<double>> Measures { get; } =
     [
@@ -56,12 +123,6 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ICyclicComponent
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Fahrenheit.GetUnit(), double.NaN),
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Kelvin.GetUnit(), double.NaN),
     ];
-
-    /// <inheritdoc />
-    public string InstanceName { get; set; } = string.Empty;
-
-    /// <inheritdoc/>
-    public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SimulatedTemperatureSensor"/> class.

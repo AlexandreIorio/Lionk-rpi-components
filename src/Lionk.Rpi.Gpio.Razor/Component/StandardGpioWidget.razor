@@ -1,32 +1,52 @@
 ﻿@using Lionk.Core.Component
 @using Lionk.Core.DataModel
+@using Lionk.Core.View
 @using MudBlazor
 @using Lionk.Core
 @namespace Lionk.Rpi.Gpio
+@attribute [ViewOfAttribute("Standard I/O gpio on Rpi 4", typeof(StandardIOGpio), typeof(StandardGpioWidget), ViewContext.Configuration)]
 
-<h3>StandardGpioWidget</h3>
 
-@if (_value > 0)
+@if (Gpio is null)
 {
-    <MudChip T="string" Color="Color.Success">Active</MudChip>
+    <MudText Typo="Typo.body1" >No Gpio found</MudText>
 }
 else
 {
-    <MudChip T="string" Color="Color.Dark">Inactive</MudChip>
-
+    <MudText Typo="Typo.h6" Class="@_icon">@Gpio.InstanceName</MudText>
+    @if (_value > 0)
+    {
+        <MudChip T="string" Color="Color.Success">Active</MudChip>
+    }
+    else
+    {
+        <MudChip T="string" Color="Color.Dark">Inactive</MudChip>
+    }
 }
 
+
 @code {
-    // TODO ALEX pas sûr de ce que je fais ici si value est vraiment un int.
     private int _value = 0;
 
     [Parameter] public StandardIOGpio? Gpio { get; set; }
+
+    private string _icon = "";
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         if (Gpio != null)
         {
+            switch (Gpio)
+            {
+                case InputGpio:
+                    _icon = "bi bi-box-arrow-in-down";
+                    break;
+                case OutputGpio:
+                    _icon = "bi bi-box-arrow-up";
+                    break;
+            }
+
             Gpio.NewValueAvailable += GpioNewValueAvailable;
         }
     }

@@ -5,8 +5,6 @@
 @attribute [ViewOfAttribute("DS18B20 Configuration", typeof(DS18B20), typeof(DS18B20Config), ViewContext.Configuration)]
 
 <MudTextField @bind-Value="_component.InstanceName" Label="Name" />
-<MudTextField @bind-Value="seconds" Label="Update frequency in s" T="int"/>
-
 <MudSelect @bind-Value="_component.Address" Label="Bus Address">
     @foreach (var address in DS18B20.ConnectedSensors())
     {

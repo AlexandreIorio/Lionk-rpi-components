@@ -5,7 +5,8 @@
 @attribute [ViewOfAttribute("Simulated temperature sensor configuration", typeof(SimulatedTemperatureSensor), typeof(SimulatedTemperatureSensorConfig), ViewContext.Configuration)]
 
 <MudTextField @bind-Value="_component.InstanceName" Label="Name" />
-<MudTextField @bind-Value="seconds" Label="Update frequency in s" T="int" />
+<MudTextField @bind-Value="_component.MinSimulatedTemperature" Label="Min simulation temp." />
+<MudTextField @bind-Value="_component.MaxSimulatedTemperature" Label="Max simulation temp." />
 <MudRadioGroup @bind-Value="_component.TemperatureType">
     @foreach (TemperatureType type in Enum.GetValues(typeof(TemperatureType)))
     {

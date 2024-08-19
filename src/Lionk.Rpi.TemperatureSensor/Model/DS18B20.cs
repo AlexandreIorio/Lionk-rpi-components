@@ -3,6 +3,7 @@
 using Lionk.Core;
 using Lionk.Core.Component;
 using Lionk.Core.DataModel;
+using Lionk.Core.Observable;
 using Lionk.Log;
 
 namespace Lionk.TemperatureSensor;
@@ -11,16 +12,70 @@ namespace Lionk.TemperatureSensor;
 /// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
 /// </summary>
 [NamedElement("DS18B20", "A DS18B20 temperature sensor")]
-public class DS18B20 : ITemperatureSensor, ICyclicComponent
+public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
 {
     private static readonly string _path = "/sys/bus/w1/devices/";
-
     private static readonly string _sensorPattern = "28-";
-
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("DS18B20");
 
+    #region Observable Properties
+
+    private string _instanceName = string.Empty;
+    private Guid _id = Guid.NewGuid();
+    private TimeSpan _executionFrequency = TimeSpan.FromSeconds(5);
+    private string _address = string.Empty;
+    private TemperatureType _temperatureType = TemperatureType.Celsius;
+    private DateTime _lastRead = DateTime.MinValue;
+
     /// <inheritdoc/>
-    public TimeSpan ExecutionFrequency { get; set; } = TimeSpan.FromSeconds(5);
+    public string InstanceName
+    {
+        get => _instanceName;
+        set => SetField(ref _instanceName, value);
+    }
+
+    /// <inheritdoc/>
+    public Guid Id
+    {
+        get => _id;
+        set => SetField(ref _id, value);
+    }
+
+    /// <inheritdoc/>
+    public TimeSpan ExecutionFrequency
+    {
+        get => _executionFrequency;
+        set => SetField(ref _executionFrequency, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the address of the sensor.
+    /// </summary>
+    public string Address
+    {
+        get => _address;
+        set => SetField(ref _address, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the type of the temperature.
+    /// </summary>
+    public TemperatureType TemperatureType
+    {
+        get => _temperatureType;
+        set => SetField(ref _temperatureType, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the last read time of the sensor.
+    /// </summary>
+    public DateTime LastRead
+    {
+        get => _lastRead;
+        set => SetField(ref _lastRead, value);
+    }
+
+    #endregion
 
     /// <inheritdoc/>
     public DateTime LastExecution { get; set; }
@@ -68,25 +123,10 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     }
 
     /// <summary>
-    /// Gets or sets the address of the sensor.
-    /// </summary>
-    public string Address { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the type of the temperature.
-    /// </summary>
-    public TemperatureType TemperatureType { get; set; } = TemperatureType.Celsius;
-
-    /// <summary>
     /// Gets a value indicating whether the sensor is interfered.
     /// </summary>
     /// <remarks> <b>Null</b> if the sensor file does not exist or if the value is not read, <b>true</b> if the sensor is interfered, <b>false</b> otherwise.</remarks>
     public bool? IsInterfered { get; private set; }
-
-    /// <summary>
-    /// Gets the last read time of the sensor.
-    /// </summary>
-    public DateTime LastRead { get; private set; } = DateTime.MinValue;
 
     /// <summary>
     /// Gets the full path of the sensor file.
@@ -105,12 +145,6 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Fahrenheit.GetUnit(), double.NaN),
         new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Kelvin.GetUnit(), double.NaN),
     ];
-
-    /// <inheritdoc />
-    public string InstanceName { get; set; } = string.Empty;
-
-    /// <inheritdoc/>
-    public Guid Id { get; } = Guid.NewGuid();
 
     /// <inheritdoc/>
     public void Measure()
