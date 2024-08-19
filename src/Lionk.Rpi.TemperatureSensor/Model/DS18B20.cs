@@ -2,6 +2,7 @@
 
 using Lionk.Core;
 using Lionk.Core.Component;
+using Lionk.Core.Component.Cyclic;
 using Lionk.Core.DataModel;
 using Lionk.Core.Observable;
 using Lionk.Log;
@@ -22,10 +23,11 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
 
     private string _instanceName = string.Empty;
     private Guid _id = Guid.NewGuid();
-    private TimeSpan _executionFrequency = TimeSpan.FromSeconds(5);
+    private TimeSpan _period = TimeSpan.FromSeconds(5);
     private string _address = string.Empty;
     private TemperatureType _temperatureType = TemperatureType.Celsius;
     private DateTime _lastRead = DateTime.MinValue;
+    private CyclicComputationMethod _cyclicComputationMethod = CyclicComputationMethod.RelativeToLastExecution;
 
     /// <inheritdoc/>
     public string InstanceName
@@ -42,10 +44,10 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
     }
 
     /// <inheritdoc/>
-    public TimeSpan ExecutionFrequency
+    public TimeSpan Periode
     {
-        get => _executionFrequency;
-        set => SetField(ref _executionFrequency, value);
+        get => _period;
+        set => SetField(ref _period, value);
     }
 
     /// <summary>
@@ -73,6 +75,15 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
     {
         get => _lastRead;
         set => SetField(ref _lastRead, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the cyclic computation method.
+    /// </summary>
+    public CyclicComputationMethod CyclicComputationMethod
+    {
+        get => _cyclicComputationMethod;
+        set => SetField(ref _cyclicComputationMethod, value);
     }
 
     #endregion

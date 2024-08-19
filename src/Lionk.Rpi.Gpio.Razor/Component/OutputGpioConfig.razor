@@ -1,0 +1,41 @@
+﻿@using Lionk.Core.View
+@using MudBlazor
+@using Lionk.Core.Component
+@using Lionk.Core.Component.Cyclic;
+@using System.Device.Gpio
+@namespace Lionk.Rpi.Gpio.View
+@attribute [ViewOfAttribute("Ouptut Gpio Configuration", typeof(OutputGpio), typeof(OutputGpioConfig), ViewContext.Configuration)]
+
+
+<MudSwitch T="bool" @bind-Value="pinValue" Color="Color.Secondary">State: @_state</MudSwitch>
+<MudText Typo="Typo.body1">Pin: @Component?.Pin</MudText>
+<MudText Typo="Typo.body1">Pin Value: @Component?.PinValue</MudText>
+
+@code {
+    [Parameter] public OutputGpio? Component { get; set; }
+
+    private string _state => pinValue ? "High" : "Low";
+
+    private bool pinValue
+    {
+        get
+        {
+            if (Component is not null)
+            {
+                return Component.PinValue == PinValue.High ? true: false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        set
+        {
+            if (Component is not null)
+            {
+                Component.PinValue = value ? PinValue.High : PinValue.Low;
+            }
+        }
+    }
+
+}

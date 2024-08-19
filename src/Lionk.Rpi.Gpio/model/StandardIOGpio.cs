@@ -12,6 +12,8 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public abstract class StandardIOGpio : ObservableElement, IGpio, IMeasurableComponent<int>
 {
+    private RaspberryPi4Pin _pin = RaspberryPi4Pin.None;
+
     /// <summary>
     /// Gets the pin number of the GPIO component.
     /// </summary>
@@ -25,7 +27,19 @@ public abstract class StandardIOGpio : ObservableElement, IGpio, IMeasurableComp
     /// <summary>
     /// Gets or sets the pin number of the GPIO component.
     /// </summary>
-    public RaspberryPi4Pin Pin { get; set; }
+    public RaspberryPi4Pin Pin
+    {
+        get => _pin;
+        set
+        {
+            if (value is RaspberryPi4Pin.None) return;
+
+            RaspberryPi4Pin oldValue = _pin;
+            if (Controller.IsPinOpen((int)oldValue)) Controller.ClosePin((int)oldValue);
+            if (!Controller.IsPinOpen((int)value)) Controller.OpenPin((int)value, Mode);
+            _pin = value;
+        }
+    }
 
     private string _instanceName = string.Empty;
 
@@ -50,13 +64,19 @@ public abstract class StandardIOGpio : ObservableElement, IGpio, IMeasurableComp
     /// <summary>
     /// Opens the GPIO pin.
     /// </summary>
-    public void OpenPin() => Controller.OpenPin((int)Pin, Mode);
+    public void OpenPin()
+    {
+        if (Pin is RaspberryPi4Pin.None) return;
+
+        Controller.OpenPin((int)Pin, Mode);
+    }
 
     /// <summary>
     /// Closes the GPIO pin.
     /// </summary>
     public void ClosePin()
     {
+        if (Pin is RaspberryPi4Pin.None) return;
         if (Controller.IsPinOpen((int)Pin)) Controller.ClosePin((int)Pin);
     }
 

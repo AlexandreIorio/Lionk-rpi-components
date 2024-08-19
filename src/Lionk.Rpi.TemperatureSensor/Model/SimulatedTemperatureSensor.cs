@@ -2,6 +2,7 @@
 
 using Lionk.Core;
 using Lionk.Core.Component;
+using Lionk.Core.Component.Cyclic;
 using Lionk.Core.DataModel;
 using Lionk.Core.Observable;
 using Lionk.Log;
@@ -21,12 +22,13 @@ public class SimulatedTemperatureSensor : ObservableElement, ITemperatureSensor,
 
     private string _instanceName = string.Empty;
     private Guid _id = Guid.NewGuid();
-    private TimeSpan _executionFrequency = TimeSpan.FromSeconds(5);
+    private TimeSpan _periode = TimeSpan.FromSeconds(5);
     private string _address = string.Empty;
     private TemperatureType _temperatureType = TemperatureType.Celsius;
     private DateTime _lastRead = DateTime.MinValue;
-    private double _minSimulatedTemperature;
-    private double _maxSimulatedTemperature;
+    private double _minSimulatedTemperature = 5;
+    private double _maxSimulatedTemperature = 20;
+    private CyclicComputationMethod _cyclicComputationMethod = CyclicComputationMethod.RelativeToLastExecution;
 
     /// <inheritdoc/>
     public string InstanceName
@@ -43,10 +45,10 @@ public class SimulatedTemperatureSensor : ObservableElement, ITemperatureSensor,
     }
 
     /// <inheritdoc/>
-    public TimeSpan ExecutionFrequency
+    public TimeSpan Periode
     {
-        get => _executionFrequency;
-        set => SetField(ref _executionFrequency, value);
+        get => _periode;
+        set => SetField(ref _periode, value);
     }
 
     /// <summary>
@@ -94,6 +96,15 @@ public class SimulatedTemperatureSensor : ObservableElement, ITemperatureSensor,
         set => SetField(ref _maxSimulatedTemperature, value);
     }
 
+    /// <summary>
+    /// Gets or sets the cyclic computation method.
+    /// </summary>
+    public CyclicComputationMethod CyclicComputationMethod
+    {
+        get => _cyclicComputationMethod;
+        set => SetField(ref _cyclicComputationMethod, value);
+    }
+
     #endregion
 
     /// <inheritdoc/>
@@ -132,7 +143,7 @@ public class SimulatedTemperatureSensor : ObservableElement, ITemperatureSensor,
     public SimulatedTemperatureSensor(string name, TimeSpan readCycle)
     {
         InstanceName = name;
-        ExecutionFrequency = readCycle;
+        Periode = readCycle;
     }
 
     /// <summary>
@@ -147,7 +158,7 @@ public class SimulatedTemperatureSensor : ObservableElement, ITemperatureSensor,
     public void Measure()
     {
         // Simulate a temperature value between 5 and 35 degrees.
-        double tempData = (_random.NextDouble() * 30) + 5;
+        double tempData = (_random.NextDouble() * MaxSimulatedTemperature) + MinSimulatedTemperature;
         SetTemperature(tempData);
         LastRead = DateTime.Now;
         NewValueAvailable?.Invoke(this, new MeasureEventArgs<double>(Measures));

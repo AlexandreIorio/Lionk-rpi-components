@@ -11,7 +11,7 @@ namespace Lionk.Rpi.Gpio;
 /// This class represents an output GPIO component.
 /// </summary>
 [NamedElement("Input simulated Gpio", "This component is used to simulate the gpio gui")]
-public class SimulatedInputGpio : StandardIOGpio, IExecutableComponent
+public class SimulatedOutputGpio : StandardIOGpio, IExecutableComponent
 {
     private PinValue _pinValue;
 
@@ -38,9 +38,9 @@ public class SimulatedInputGpio : StandardIOGpio, IExecutableComponent
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SimulatedInputGpio"/> class.
+    /// Initializes a new instance of the <see cref="SimulatedOutputGpio"/> class.
     /// </summary>
-    public SimulatedInputGpio() => Mode = PinMode.Input;
+    public SimulatedOutputGpio() => Mode = PinMode.Output;
 
     /// <summary>
     /// Sets the value of the GPIO pin.

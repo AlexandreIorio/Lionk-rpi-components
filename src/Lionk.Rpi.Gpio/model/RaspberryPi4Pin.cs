@@ -8,6 +8,11 @@ namespace Lionk.Rpi.Gpio;
 public enum RaspberryPi4Pin
 {
     /// <summary>
+    /// No GPIO pin.
+    /// </summary>
+    None = 0,
+
+    /// <summary>
     /// GPIO 2 (Physical Pin 3, SDA1, I2C).
     /// </summary>
     GPIO2 = 2,

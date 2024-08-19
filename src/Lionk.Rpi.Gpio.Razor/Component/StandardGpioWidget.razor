@@ -3,17 +3,16 @@
 @using Lionk.Core.View
 @using MudBlazor
 @using Lionk.Core
-@namespace Lionk.Rpi.Gpio
-@attribute [ViewOfAttribute("Standard I/O gpio on Rpi 4", typeof(StandardIOGpio), typeof(StandardGpioWidget), ViewContext.Configuration)]
+@namespace Lionk.Rpi.Gpio.View
+@attribute [ViewOfAttribute("Standard I/O gpio on Rpi 4", typeof(StandardIOGpio), typeof(StandardGpioWidget), ViewContext.Widget)]
 
-
-@if (Gpio is null)
+@if (Component is null)
 {
     <MudText Typo="Typo.body1" >No Gpio found</MudText>
 }
 else
 {
-    <MudText Typo="Typo.h6" Class="@_icon">@Gpio.InstanceName</MudText>
+    <MudText Typo="Typo.h6" Class="@_icon">@Component.InstanceName</MudText>
     @if (_value > 0)
     {
         <MudChip T="string" Color="Color.Success">Active</MudChip>
@@ -28,16 +27,16 @@ else
 @code {
     private int _value = 0;
 
-    [Parameter] public StandardIOGpio? Gpio { get; set; }
+    [Parameter] public StandardIOGpio? Component { get; set; }
 
     private string _icon = "";
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (Gpio != null)
+        if (Component != null)
         {
-            switch (Gpio)
+            switch (Component)
             {
                 case InputGpio:
                     _icon = "bi bi-box-arrow-in-down";
@@ -47,7 +46,7 @@ else
                     break;
             }
 
-            Gpio.NewValueAvailable += GpioNewValueAvailable;
+            Component.NewValueAvailable += GpioNewValueAvailable;
         }
     }
 

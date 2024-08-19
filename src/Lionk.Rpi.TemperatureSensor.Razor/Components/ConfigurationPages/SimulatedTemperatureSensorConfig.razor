@@ -17,7 +17,7 @@
 @code {
     [Parameter] public SimulatedTemperatureSensor? Component { get; set; }
     private SimulatedTemperatureSensor _component = new SimulatedTemperatureSensor();
-    private int seconds {get => _component.ExecutionFrequency.Seconds; set => _component.ExecutionFrequency = TimeSpan.FromSeconds(value);}
+    private int seconds { get => _component.Periode.Seconds; set => _component.Periode = TimeSpan.FromSeconds(value); }
 
     protected override void OnInitialized()
     {

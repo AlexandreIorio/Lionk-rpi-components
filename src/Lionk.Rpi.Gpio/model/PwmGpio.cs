@@ -1,6 +1,7 @@
 ﻿// Copyright © 2024 Lionk Project
 
 using System.Device.Pwm;
+using Lionk.Core;
 using Lionk.Core.Component;
 
 namespace Lionk.Rpi.Gpio;
@@ -8,6 +9,7 @@ namespace Lionk.Rpi.Gpio;
 /// <summary>
 /// This class represents a PWM GPIO component.
 /// </summary>
+[NamedElement("PWM Gpio generator Rpi4", "This component represent a PWM Gpio generator from the Raspberry Pi 4")]
 public class PwmGpio : IExecutableComponent, IDisposable
 {
     private readonly PwmChannel _pwmChannel;
