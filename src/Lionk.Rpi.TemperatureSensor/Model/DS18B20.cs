@@ -110,7 +110,7 @@ public class DS18B20 : ITemperatureSensor, ICyclicComponent
     public string InstanceName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public Guid UniqueID { get; } = Guid.NewGuid();
+    public Guid Id { get; } = Guid.NewGuid();
 
     /// <inheritdoc/>
     public void Measure()

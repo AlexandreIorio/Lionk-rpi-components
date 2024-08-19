@@ -3,13 +3,14 @@
 using System.Device.Gpio;
 using Lionk.Core.Component;
 using Lionk.Core.DataModel;
+using Lionk.Core.Observable;
 
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
 /// This class represents a standard input/output GPIO component.
 /// </summary>
-public abstract class StandardIOGpio : IGpio, IMeasurableComponent<int>
+public abstract class StandardIOGpio : ObservableElement, IGpio, IMeasurableComponent<int>
 {
     /// <summary>
     /// Gets the pin number of the GPIO component.
@@ -26,11 +27,17 @@ public abstract class StandardIOGpio : IGpio, IMeasurableComponent<int>
     /// </summary>
     public RaspberryPi4Pin Pin { get; set; }
 
-    /// <inheritdoc/>
-    public string InstanceName { get; set; } = string.Empty;
+    private string _instanceName = string.Empty;
 
     /// <inheritdoc/>
-    public Guid UniqueID { get; } = Guid.NewGuid();
+    public string InstanceName
+    {
+        get => _instanceName;
+        set => SetField(ref _instanceName, value);
+    }
+
+    /// <inheritdoc/>
+    public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
     /// Gets the measures of the GPIO component.

@@ -61,7 +61,7 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ICyclicComponent
     public string InstanceName { get; set; } = string.Empty;
 
     /// <inheritdoc/>
-    public Guid UniqueID { get; } = Guid.NewGuid();
+    public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SimulatedTemperatureSensor"/> class.
