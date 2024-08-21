@@ -6,7 +6,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @namespace Lionk.TemperatureSensor
-@attribute [ViewOfAttribute("Simple temperature widget", typeof(ITemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
+@attribute [ViewOfAttribute("Simple temperature widget", typeof(BaseTemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
 
 @if (Component is null)
 {
@@ -14,7 +14,7 @@
 }
 else
 {
-    if (Component is ITemperatureSensor sensor)
+    if (Component is BaseTemperatureSensor sensor)
     {
         <MudText Typo="Typo.h6" Class="bi bi-thermometer-half text-center">@sensor.InstanceName</MudText>
         <MudText Typo="Typo.body1">@GetTemperature()</MudText>
@@ -24,12 +24,12 @@ else
 
 @code {
 
-        [Parameter] public ITemperatureSensor? Component { get; set; }
+    [Parameter] public BaseTemperatureSensor? Component { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if(Component is not null && Component is ITemperatureSensor sensor)
+        if (Component is not null && Component is BaseTemperatureSensor sensor)
         {
             sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
         }
@@ -37,7 +37,7 @@ else
 
     private string GetTemperature(int roundDecimal = 2)
     {
-        ITemperatureSensor? sensor = (ITemperatureSensor?)Component;
+        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Component;
         if (sensor is null) return "No data";
         double value = sensor.Measures[(int)sensor.TemperatureType].Value;
         string unit = sensor.Measures[(int)sensor.TemperatureType].Unit;
@@ -47,7 +47,7 @@ else
 
     private string GetTime()
     {
-        ITemperatureSensor? sensor = (ITemperatureSensor?)Component;
+        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Component;
         if (sensor is null) return "No data";
 
         return sensor.Measures[(int)sensor.TemperatureType].Time.ToString() ?? "No data";

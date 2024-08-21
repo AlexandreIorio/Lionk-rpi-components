@@ -19,23 +19,26 @@ public class OutputGpio : StandardIOGpio, IExecutableComponent
     public PinValue? PinValue { get; set; }
 
     /// <summary>
+    /// Gets a value indicating whether the component can be executed.
+    /// </summary>
+    public override bool CanExecute => IsOpenPin();
+
+    /// <summary>
     /// Reads the value of the GPIO pin.
     /// </summary>
     /// <param name="value"> The value to write to the GPIO pin. </param>
     public void WritePin(PinValue value)
     {
-        if (Pin is RaspberryPi4Pin.None) return;
+        if (Pin is Rpi4Gpio.None) return;
         Controller.Write((int)Pin, value);
     }
 
     /// <inheritdoc/>
-    public override TimeSpan? Execute()
+    public new void Execute()
     {
-        if (Pin is RaspberryPi4Pin.None || PinValue is null) return null;
-        DateTime start = DateTime.UtcNow;
+        if (Pin is Rpi4Gpio.None || PinValue is null) return;
         Measure();
         WritePin(PinValue.Value);
-        return DateTime.UtcNow - start;
     }
 
     /// <inheritdoc/>

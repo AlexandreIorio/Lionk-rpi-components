@@ -6,8 +6,8 @@
 @attribute [ViewOfAttribute("Gpio Configuration", typeof(StandardIOGpio), typeof(StandardGpioConfig), ViewContext.Configuration)]
 
 
-<MudSelect Label="GPIO" T="Rpi.Gpio.RaspberryPi4Pin" @bind-Value="_pin" >
-    @foreach (var pin in Enum.GetValues(typeof(RaspberryPi4Pin)).Cast<Rpi.Gpio.RaspberryPi4Pin>())
+<MudSelect Label="GPIO" T="Rpi.Gpio.Rpi4Gpio" @bind-Value="_pin" >
+    @foreach (var pin in Enum.GetValues(typeof(Rpi4Gpio)).Cast<Rpi.Gpio.Rpi4Gpio>())
     {
         <MudSelectItem Value="@pin">@pin</MudSelectItem>
     }
@@ -16,9 +16,9 @@
 @code {
     [Parameter] public StandardIOGpio? Component { get; set; }
 
-    private RaspberryPi4Pin _pin
+    private Rpi4Gpio _pin
     {
-        get => Component?.Pin ?? RaspberryPi4Pin.None;
+        get => Component?.Pin ?? Rpi4Gpio.None;
         set
         {
             if (Component != null)

@@ -3,21 +3,63 @@
 using System.Device.Gpio;
 using Lionk.Core.Component;
 using Lionk.Core.DataModel;
-using Lionk.Core.Observable;
 
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
 /// This class represents a standard input/output GPIO component.
 /// </summary>
-public abstract class StandardIOGpio : ObservableElement, IGpio, IMeasurableComponent<int>
+public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
 {
-    private RaspberryPi4Pin _pin = RaspberryPi4Pin.None;
+    private Rpi4Gpio _pin = Rpi4Gpio.None;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StandardIOGpio"/> class.
+    /// </summary>
+    public StandardIOGpio()
+    {
+        if (IsRpi)
+        {
+            Controller = new Rpi4GpioController();
+        }
+        else
+        {
+            Controller = new SimulatedGpioController();
+        }
+    }
+
+    /// <inheritdoc/>
+    public event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
+
+    /// <summary>
+    /// Gets the measures of the GPIO component.
+    /// </summary>
+    public List<Measure<int>> Measures { get; } = [];
+
+    /// <summary>
+    /// Gets or sets the pin number of the GPIO component.
+    /// </summary>
+    public override Rpi4Gpio Pin
+    {
+        get => _pin;
+        set
+        {
+            if (value is Rpi4Gpio.None) return;
+
+            Rpi4Gpio oldValue = _pin;
+
+            if (Controller is null) return;
+            if (Controller.IsPinOpen((int)oldValue)) Controller.ClosePin((int)oldValue);
+            if (!Controller.IsPinOpen((int)value)) Controller.OpenPin((int)value, Mode);
+
+            SetField(ref _pin, value);
+        }
+    }
 
     /// <summary>
     /// Gets the pin number of the GPIO component.
     /// </summary>
-    protected GpioController Controller { get; }
+    protected IGpioController Controller { get; }
 
     /// <summary>
     /// Gets or sets the pin mode of the GPIO component.
@@ -25,81 +67,37 @@ public abstract class StandardIOGpio : ObservableElement, IGpio, IMeasurableComp
     protected PinMode Mode { get; set; }
 
     /// <summary>
-    /// Gets or sets the pin number of the GPIO component.
-    /// </summary>
-    public RaspberryPi4Pin Pin
-    {
-        get => _pin;
-        set
-        {
-            if (value is RaspberryPi4Pin.None) return;
-
-            RaspberryPi4Pin oldValue = _pin;
-            if (Controller.IsPinOpen((int)oldValue)) Controller.ClosePin((int)oldValue);
-            if (!Controller.IsPinOpen((int)value)) Controller.OpenPin((int)value, Mode);
-            _pin = value;
-        }
-    }
-
-    private string _instanceName = string.Empty;
-
-    /// <inheritdoc/>
-    public string InstanceName
-    {
-        get => _instanceName;
-        set => SetField(ref _instanceName, value);
-    }
-
-    /// <inheritdoc/>
-    public Guid Id { get; } = Guid.NewGuid();
-
-    /// <summary>
-    /// Gets the measures of the GPIO component.
-    /// </summary>
-    public List<Measure<int>> Measures { get; } = [];
-
-    /// <inheritdoc/>
-    public event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
-
-    /// <summary>
-    /// Opens the GPIO pin.
-    /// </summary>
-    public void OpenPin()
-    {
-        if (Pin is RaspberryPi4Pin.None) return;
-
-        Controller.OpenPin((int)Pin, Mode);
-    }
-
-    /// <summary>
     /// Closes the GPIO pin.
     /// </summary>
-    public void ClosePin()
-    {
-        if (Pin is RaspberryPi4Pin.None) return;
-        if (Controller.IsPinOpen((int)Pin)) Controller.ClosePin((int)Pin);
-    }
+    public void ClosePin() => Controller.ClosePin((int)Pin);
+
+    /// <summary>
+    /// Method to open the GPIO pin.
+    /// </summary>
+    public void OpenPin() => Controller.OpenPin((int)Pin, Mode);
+
+    /// <summary>
+    /// Method to check if the GPIO pin is open.
+    /// </summary>
+    /// <returns> True if the GPIO pin is open, false otherwise. </returns>
+    public bool IsOpenPin() => Controller.IsPinOpen((int)Pin);
 
     /// <inheritdoc/>
-    public abstract TimeSpan? Execute();
-
-    /// <inheritdoc/>
-    public void Dispose()
+    public override void Dispose()
     {
+        base.Dispose();
         ClosePin();
-        Controller.Dispose();
-        GC.SuppressFinalize(this);
+        if (IsRpi && Controller is not null)
+        {
+            Controller.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
     /// Measures the value of the GPIO pin.
     /// </summary>
     public abstract void Measure();
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="StandardIOGpio"/> class.
-    /// </summary>
-    public StandardIOGpio() => Controller = new GpioController();
 
     /// <summary>
     /// Raises the <see cref="NewValueAvailable"/> event.

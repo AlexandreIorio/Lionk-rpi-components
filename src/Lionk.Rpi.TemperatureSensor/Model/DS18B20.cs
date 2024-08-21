@@ -1,10 +1,7 @@
 ﻿// Copyright © 2024 Lionk Project
 
 using Lionk.Core;
-using Lionk.Core.Component;
-using Lionk.Core.Component.Cyclic;
 using Lionk.Core.DataModel;
-using Lionk.Core.Observable;
 using Lionk.Log;
 
 namespace Lionk.TemperatureSensor;
@@ -13,7 +10,7 @@ namespace Lionk.TemperatureSensor;
 /// This class is used to get the temperature of the DS18B20 sensor connected to a Raspberry Pi.
 /// </summary>
 [NamedElement("DS18B20", "A DS18B20 temperature sensor")]
-public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
+public class DS18B20 : BaseTemperatureSensor
 {
     private static readonly string _path = "/sys/bus/w1/devices/";
     private static readonly string _sensorPattern = "28-";
@@ -21,34 +18,7 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
 
     #region Observable Properties
 
-    private string _instanceName = string.Empty;
-    private Guid _id = Guid.NewGuid();
-    private TimeSpan _period = TimeSpan.FromSeconds(5);
     private string _address = string.Empty;
-    private TemperatureType _temperatureType = TemperatureType.Celsius;
-    private DateTime _lastRead = DateTime.MinValue;
-    private CyclicComputationMethod _cyclicComputationMethod = CyclicComputationMethod.RelativeToLastExecution;
-
-    /// <inheritdoc/>
-    public string InstanceName
-    {
-        get => _instanceName;
-        set => SetField(ref _instanceName, value);
-    }
-
-    /// <inheritdoc/>
-    public Guid Id
-    {
-        get => _id;
-        set => SetField(ref _id, value);
-    }
-
-    /// <inheritdoc/>
-    public TimeSpan Periode
-    {
-        get => _period;
-        set => SetField(ref _period, value);
-    }
 
     /// <summary>
     /// Gets or sets the address of the sensor.
@@ -59,54 +29,7 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
         set => SetField(ref _address, value);
     }
 
-    /// <summary>
-    /// Gets or sets the type of the temperature.
-    /// </summary>
-    public TemperatureType TemperatureType
-    {
-        get => _temperatureType;
-        set => SetField(ref _temperatureType, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the last read time of the sensor.
-    /// </summary>
-    public DateTime LastRead
-    {
-        get => _lastRead;
-        set => SetField(ref _lastRead, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the cyclic computation method.
-    /// </summary>
-    public CyclicComputationMethod CyclicComputationMethod
-    {
-        get => _cyclicComputationMethod;
-        set => SetField(ref _cyclicComputationMethod, value);
-    }
-
     #endregion
-
-    /// <inheritdoc/>
-    public DateTime LastExecution { get; set; }
-
-    /// <inheritdoc/>
-    public int NbCycle { get; set; }
-
-    /// <inheritdoc/>
-    public DateTime StartedDate { get; set; }
-
-    /// <inheritdoc/>
-    public TimeSpan? Execute()
-    {
-        DateTime dateTime = DateTime.UtcNow;
-        Measure();
-        return DateTime.UtcNow - dateTime;
-    }
-
-    /// <inheritdoc/>
-    public event EventHandler<MeasureEventArgs<double>>? NewValueAvailable;
 
     /// <summary>
     /// Static method to get the connected sensors.
@@ -149,17 +72,13 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
     /// </summary>
     public bool Exists => File.Exists(SensorFile);
 
-    /// <inheritdoc />
-    public List<Measure<double>> Measures { get; } =
-    [
-        new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Celsius.GetUnit(), double.NaN),
-        new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Fahrenheit.GetUnit(), double.NaN),
-        new Measure<double>("Temperature", DateTime.UtcNow, TemperatureType.Kelvin.GetUnit(), double.NaN),
-    ];
+    /// <inheritdoc/>
+    public override bool CanExecute => Exists;
 
     /// <inheritdoc/>
-    public void Measure()
+    public override void Measure()
     {
+        base.Measure();
         if (!Exists)
         {
             _logger?.Log(LogSeverity.Debug, $"Sensor file does not exist: {SensorFile}");
@@ -181,8 +100,6 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
         string tempData = lines[1].Split('=')[1];
         SetTemperature(Convert.ToDouble(tempData) / 1000.0);
         IsInterfered = false;
-        LastRead = DateTime.Now;
-        NewValueAvailable?.Invoke(this, new MeasureEventArgs<double>(Measures));
     }
 
     /// <summary>
@@ -217,21 +134,4 @@ public class DS18B20 : ObservableElement, ITemperatureSensor, ICyclicComponent
     /// </summary>
     /// <returns> The value of the temperature.</returns>
     protected double GetTemperature() => Measures[(int)TemperatureType].Value;
-
-    /// <summary>
-    /// Method to get the status of the sensor.
-    /// </summary>
-    /// <returns> The status of the sensor.</returns>
-    public string GetSensorStatus()
-    {
-        string status = $@"
-Sensor:         {InstanceName}
-Address:        {Address} 
-Exists:         {Exists}
-LastRead:       {LastRead}
-Temperature:    {GetTemperature()} {TemperatureType.GetUnit()} 
-IsInterfered:   {IsInterfered}";
-
-        return status;
-    }
 }

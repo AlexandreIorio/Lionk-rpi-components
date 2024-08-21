@@ -2,7 +2,6 @@
 
 using System.Device.Gpio;
 using Lionk.Core;
-using Lionk.Core.Component;
 using Lionk.Core.DataModel;
 
 namespace Lionk.Rpi.Gpio;
@@ -11,8 +10,11 @@ namespace Lionk.Rpi.Gpio;
 /// This class represents an input GPIO component.
 /// </summary>
 [NamedElement("Input Gpio RPI4", "This component represent an input Gpio from the Raspberry Pi 4")]
-public class InputGpio : StandardIOGpio, IExecutableComponent
+public class InputGpio : StandardIOGpio
 {
+    /// <inheritdoc/>
+    public override bool CanExecute => IsOpenPin();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="InputGpio"/> class.
     /// </summary>
@@ -26,18 +28,19 @@ public class InputGpio : StandardIOGpio, IExecutableComponent
     /// <returns> The value of the GPIO pin. </returns>
     public PinValue? ReadPin()
     {
-        if (Pin is RaspberryPi4Pin.None) return null;
+        if (Pin is Rpi4Gpio.None) return null;
         PinValue value;
         value = Controller.Read((int)Pin);
         return value;
     }
 
-    /// <inheritdoc/>
-    public override TimeSpan? Execute()
+    /// <summary>
+    /// Reads the value of the GPIO pin.
+    /// </summary>
+    public new void Execute()
     {
-        DateTime start = DateTime.UtcNow;
+        base.Execute();
         Measure();
-        return DateTime.UtcNow - start;
     }
 
     /// <summary>

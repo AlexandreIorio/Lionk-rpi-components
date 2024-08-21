@@ -5,25 +5,35 @@ namespace Lionk.Rpi.Gpio;
 /// <summary>
 /// This enum represents the GPIO pin numbers on the Raspberry Pi 4, with physical pin numbers as comments.
 /// </summary>
-public enum RaspberryPi4Pin
+public enum Rpi4Gpio
 {
     /// <summary>
     /// No GPIO pin.
     /// </summary>
-    None = 0,
+    None = -1,
 
     /// <summary>
-    /// GPIO 2 (Physical Pin 3, SDA1, I2C).
+    /// GPIO 0 (Physical Pin 27).
+    /// </summary>
+    GPIO0 = 0,
+
+    /// <summary>
+    /// GPIO 1 (Physical Pin 28).
+    /// </summary>
+    GPIO1 = 1,
+
+    /// <summary>
+    /// GPIO 2 (Physical Pin 3.
     /// </summary>
     GPIO2 = 2,
 
     /// <summary>
-    /// GPIO 3 (Physical Pin 5, SCL1, I2C).
+    /// GPIO 3 (Physical Pin 5).
     /// </summary>
     GPIO3 = 3,
 
     /// <summary>
-    /// GPIO 4 (Physical Pin 7, GPCLK0).
+    /// GPIO 4 (Physical Pin 7.
     /// </summary>
     GPIO4 = 4,
 
@@ -38,47 +48,47 @@ public enum RaspberryPi4Pin
     GPIO6 = 6,
 
     /// <summary>
-    /// GPIO 7 (Physical Pin 26, SPI CE1).
+    /// GPIO 7 (Physical Pin 26).
     /// </summary>
     GPIO7 = 7,
 
     /// <summary>
-    /// GPIO 8 (Physical Pin 24, SPI CE0).
+    /// GPIO 8 (Physical Pin 24).
     /// </summary>
     GPIO8 = 8,
 
     /// <summary>
-    /// GPIO 9 (Physical Pin 21, SPI MISO).
+    /// GPIO 9 (Physical Pin 21).
     /// </summary>
     GPIO9 = 9,
 
     /// <summary>
-    /// GPIO 10 (Physical Pin 19, SPI MOSI).
+    /// GPIO 10 (Physical Pin 19).
     /// </summary>
     GPIO10 = 10,
 
     /// <summary>
-    /// GPIO 11 (Physical Pin 23, SPI SCLK).
+    /// GPIO 11 (Physical Pin 23).
     /// </summary>
     GPIO11 = 11,
 
     /// <summary>
-    /// GPIO 12 (Physical Pin 32, PWM0).
+    /// GPIO 12 (Physical Pin 32).
     /// </summary>
     GPIO12 = 12,
 
     /// <summary>
-    /// GPIO 13 (Physical Pin 33, PWM1).
+    /// GPIO 13 (Physical Pin 33).
     /// </summary>
     GPIO13 = 13,
 
     /// <summary>
-    /// GPIO 14 (Physical Pin 8, TXD0).
+    /// GPIO 14 (Physical Pin 8).
     /// </summary>
     GPIO14 = 14,
 
     /// <summary>
-    /// GPIO 15 (Physical Pin 10, RXD0).
+    /// GPIO 15 (Physical Pin 10).
     /// </summary>
     GPIO15 = 15,
 
@@ -93,12 +103,12 @@ public enum RaspberryPi4Pin
     GPIO17 = 17,
 
     /// <summary>
-    /// GPIO 18 (Physical Pin 12, PCM_CLK).
+    /// GPIO 18 (Physical Pin 12).
     /// </summary>
     GPIO18 = 18,
 
     /// <summary>
-    /// GPIO 19 (Physical Pin 35, PCM_FS).
+    /// GPIO 19 (Physical Pin 35).
     /// </summary>
     GPIO19 = 19,
 

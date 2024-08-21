@@ -22,7 +22,6 @@
 @code {
     [Parameter] public DS18B20? Component { get; set; }
     private DS18B20 _component = new();
-    private int seconds { get => _component.Periode.Seconds; set => _component.Periode = TimeSpan.FromSeconds(value); }
 
     protected override void OnInitialized()
     {
