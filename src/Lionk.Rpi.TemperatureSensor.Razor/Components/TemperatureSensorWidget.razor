@@ -1,4 +1,5 @@
 @using Lionk.Core
+@using Lionk.Core.Model.Component
 @using Lionk.Core.View
 @using Lionk.TemperatureSensor
 @using Lionk.Core.Component
@@ -8,13 +9,13 @@
 @namespace Lionk.TemperatureSensor
 @attribute [ViewOfAttribute("Simple temperature widget", typeof(BaseTemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
 
-@if (Component is null)
+@if (Container?.Component is null)
 {
     <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
 }
 else
 {
-    if (Component is BaseTemperatureSensor sensor)
+    if (Container?.Component is BaseTemperatureSensor sensor)
     {
         <MudText Typo="Typo.h6" Class="bi bi-thermometer-half text-center">@sensor.InstanceName</MudText>
         <MudText Typo="Typo.body1">@GetTemperature()</MudText>
@@ -24,12 +25,12 @@ else
 
 @code {
 
-    [Parameter] public BaseTemperatureSensor? Component { get; set; }
+    [Parameter] public ComponentContainer? Container { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (Component is not null && Component is BaseTemperatureSensor sensor)
+        if (Container?.Component is not null && Container.Component is BaseTemperatureSensor sensor)
         {
             sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
         }
@@ -37,7 +38,7 @@ else
 
     private string GetTemperature(int roundDecimal = 2)
     {
-        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Component;
+        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Container?.Component;
         if (sensor is null) return "No data";
         double value = sensor.Measures[(int)sensor.TemperatureType].Value;
         string unit = sensor.Measures[(int)sensor.TemperatureType].Unit;
@@ -47,7 +48,7 @@ else
 
     private string GetTime()
     {
-        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Component;
+        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Container?.Component;
         if (sensor is null) return "No data";
 
         return sensor.Measures[(int)sensor.TemperatureType].Time.ToString() ?? "No data";
