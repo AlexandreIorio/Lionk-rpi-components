@@ -2,7 +2,7 @@
 
 using Lionk.Rpi.Gpio;
 
-PwmGpio pwmGpio = new();
+Rpi4PwmGpio pwmGpio = new();
 pwmGpio.DutyCycle = 0;
 pwmGpio.Execute();
 CancellationTokenSource cts = new();

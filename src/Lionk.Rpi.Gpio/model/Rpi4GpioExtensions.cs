@@ -1,5 +1,7 @@
 ﻿// Copyright © 2024 Lionk Project
 
+using Microsoft.AspNetCore.Http;
+
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
@@ -52,4 +54,32 @@ public static class Rpi4GpioExtensions
     /// <param name="type"> The GPIO type to check. </param>
     /// <returns> True if the pin is of the specified GPIO type, false otherwise. </returns>
     public static bool Is(this Rpi4Gpio pin, GpioType type) => (GetGpioType(pin) & type) == type;
+
+    /// <summary>
+    /// This method returns the PWM chip of a pin.
+    /// </summary>
+    /// <param name="pin"> The pin to get the PWM chip from. </param>
+    /// <returns> The PWM chip of the pin. </returns>
+    public static int PwmChip(this Rpi4Gpio pin) => pin switch
+    {
+        Rpi4Gpio.GPIO12 => 0,
+        Rpi4Gpio.GPIO13 => 0,
+        Rpi4Gpio.GPIO18 => 0,
+        Rpi4Gpio.GPIO19 => 0,
+        _ => -1,
+    };
+
+    /// <summary>
+    /// This method returns the PWM channel of a pin.
+    /// </summary>
+    /// <param name="pin"> The pin to get the PWM channel from. </param>
+    /// <returns> The PWM channel of the pin. </returns>
+    public static int PwmChannel(this Rpi4Gpio pin) => pin switch
+    {
+        Rpi4Gpio.GPIO12 => 0,
+        Rpi4Gpio.GPIO13 => 1,
+        Rpi4Gpio.GPIO18 => 0,
+        Rpi4Gpio.GPIO19 => 1,
+        _ => -1,
+    };
 }

@@ -8,14 +8,19 @@ namespace Lionk.Rpi.Gpio;
 public interface IPwmChannel : IDisposable
 {
     /// <summary>
+    /// Gets or sets the duty cycle represented as a value between 0.0 and 1.0.
+    /// </summary>
+    double DutyCycle { get; set; }
+
+    /// <summary>
     /// Gets or sets the frequency in hertz.
     /// </summary>
     int Frequency { get; set; }
 
     /// <summary>
-    /// Gets or sets the duty cycle represented as a value between 0.0 and 1.0.
+    /// Gets a value indicating whether the PWM channel is running.
     /// </summary>
-    double DutyCycle { get; set; }
+    bool IsRunning { get; }
 
     /// <summary>
     /// Starts the PWM channel.

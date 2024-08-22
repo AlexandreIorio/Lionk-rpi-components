@@ -9,8 +9,8 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public class SimulatedPwmChannel : IPwmChannel
 {
-    private int _frequency;
     private double _dutyCycle;
+    private int _frequency;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SimulatedPwmChannel"/> class.
@@ -21,23 +21,6 @@ public class SimulatedPwmChannel : IPwmChannel
     {
         _frequency = frequency;
         _dutyCycle = dutyCycle;
-    }
-
-    /// <summary>
-    /// Gets or sets the frequency in hertz.
-    /// </summary>
-    public int Frequency
-    {
-        get => _frequency;
-        set
-        {
-            if (value <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(value), "Frequency must be a positive value.");
-            }
-
-            _frequency = value;
-        }
     }
 
     /// <summary>
@@ -58,14 +41,29 @@ public class SimulatedPwmChannel : IPwmChannel
     }
 
     /// <summary>
-    /// Starts the simulated PWM channel.
+    /// Gets or sets the frequency in hertz.
     /// </summary>
-    public void Start() => Console.WriteLine("Simulated PWM channel started.");
+    public int Frequency
+    {
+        get => _frequency;
+        set
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "Frequency must be a positive value.");
+            }
+
+            _frequency = value;
+        }
+    }
 
     /// <summary>
-    /// Stops the simulated PWM channel.
+    /// Gets a value indicating whether the PWM channel is running.
     /// </summary>
-    public void Stop() => Console.WriteLine("Simulated PWM channel stopped.");
+    public bool IsRunning { get; private set; }
+
+    /// <inheritdoc/>
+    public void Dispose() => GC.SuppressFinalize(this);
 
     /// <summary>
     /// Provides component information for debugging purposes.
@@ -73,6 +71,21 @@ public class SimulatedPwmChannel : IPwmChannel
     /// <returns>A <see cref="ComponentInformation"/> instance containing information about the simulated PWM channel.</returns>
     public ComponentInformation QueryComponentInformation() => new(this, "Simulated PWM Device");
 
-    /// <inheritdoc/>
-    public void Dispose() => throw new NotImplementedException();
+    /// <summary>
+    /// Starts the simulated PWM channel.
+    /// </summary>
+    public void Start()
+    {
+        IsRunning = true;
+        Console.WriteLine("Simulated PWM channel started.");
+    }
+
+    /// <summary>
+    /// Stops the simulated PWM channel.
+    /// </summary>
+    public void Stop()
+    {
+        IsRunning = false;
+        Console.WriteLine("Simulated PWM channel stopped.");
+    }
 }
