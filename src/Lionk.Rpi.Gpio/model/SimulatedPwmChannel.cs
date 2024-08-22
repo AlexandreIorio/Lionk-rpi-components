@@ -1,56 +1,16 @@
 ﻿// Copyright © 2024 Lionk Project
 
 using System.Device;
+using Lionk.Core;
 
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
 /// Simulates a PWM channel for testing and development purposes.
 /// </summary>
-public class SimulatedPwmChannel : IPwmChannel
+[NamedElement("Simulated PWM Gpio", "This component represent a simulation of a PWM GPIO")]
+public class SimulatedPwmChannel : StandardPwmGpio
 {
-    /// <summary>
-    /// Gets or sets the duty cycle represented as a value between 0.0 and 1.0.
-    /// </summary>
-    public double DutyCycle
-    {
-        get => _dutyCycle;
-        set
-        {
-            if (value < 0.0 || value > 1.0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(value), "Duty cycle must be between 0.0 and 1.0.");
-            }
-
-            _dutyCycle = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the frequency in hertz.
-    /// </summary>
-    public int Frequency
-    {
-        get => _frequency;
-        set
-        {
-            if (value <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(value), "Frequency must be a positive value.");
-            }
-
-            _frequency = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether the PWM channel is running.
-    /// </summary>
-    public bool IsRunning { get; private set; }
-
-    /// <inheritdoc/>
-    public void Dispose() => GC.SuppressFinalize(this);
-
     /// <summary>
     /// Provides component information for debugging purposes.
     /// </summary>
@@ -60,18 +20,18 @@ public class SimulatedPwmChannel : IPwmChannel
     /// <summary>
     /// Starts the simulated PWM channel.
     /// </summary>
-    public void Start()
+    public override void Start()
     {
-        IsRunning = true;
+        base.Start();
         Console.WriteLine("Simulated PWM channel started.");
     }
 
     /// <summary>
     /// Stops the simulated PWM channel.
     /// </summary>
-    public void Stop()
+    public override void Stop()
     {
-        IsRunning = false;
+        base.Stop();
         Console.WriteLine("Simulated PWM channel stopped.");
     }
 }

@@ -2,7 +2,6 @@
 
 using System.Device.Pwm;
 using Lionk.Core;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Lionk.Rpi.Gpio;
 

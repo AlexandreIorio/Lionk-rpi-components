@@ -1,0 +1,24 @@
+﻿@page "/"
+@using MudBlazor
+@using Lionk.Rpi.Gpio.View
+@rendermode InteractiveServer
+
+<h3>Home</h3>
+<PwmSignalDisplayer DutyCycle="@_dutyCycle"></PwmSignalDisplayer>
+<MudButton OnClick="Plus">+10%</MudButton>
+<MudButton OnClick="Minus">-10%</MudButton>
+
+@code {
+    private double _dutyCycle = 0.5;
+    private void Plus()
+    {
+        _dutyCycle = Math.Min(_dutyCycle + 0.1, 1.0);
+        StateHasChanged();
+    }
+
+    private void Minus()
+    {
+        _dutyCycle = Math.Max(_dutyCycle - 0.1, 0.0);
+        StateHasChanged();
+    }
+}

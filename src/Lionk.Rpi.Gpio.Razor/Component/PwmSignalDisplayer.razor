@@ -1,0 +1,74 @@
+﻿@namespace Lionk.Rpi.Gpio.View
+@using Lionk.Core.View
+@using Lionk.Rpi.Gpio
+@using Microsoft.JSInterop
+@using MudBlazor
+
+<MudChart Style="width:100%" ChartType="ChartType.Line" ChartSeries="@_series" ChartOptions="@_options"/>
+<MudText Typo="Typo.h6" Style="text-align: center;">@_indexesAtOnePercentage %</MudText>
+
+
+@code {
+    private readonly List<ChartSeries> _series = new List<ChartSeries>();
+    private readonly ChartOptions _options = new();
+
+
+    [Parameter]
+    public double DutyCycle { get; set; }
+
+    [Parameter]
+    public int Resolution { get; set; } = 200;
+
+    protected override void OnParametersSet()
+    {
+        values = new double[Resolution];
+        one = Enumerable.Repeat(1.0, 1).ToArray();
+        zero = Enumerable.Repeat(0.0, 1).ToArray();
+        _dutyCycle = DutyCycle;
+        _series.Clear();
+        _series.Add(new ChartSeries { Data = representation });
+        _series.Add(new ChartSeries { Data = one });
+        _series.Add(new ChartSeries { Data = zero });
+        _options.YAxisTicks = 1;
+        _options.YAxisLines = false;
+        _options.ShowLegend = false;
+    }
+
+    private double[] values = null!;
+    private double[] one = null!;
+    private double[] zero = null!;
+    private double[] representation
+    {
+        get
+        {
+            var last = values.Skip(values.Length - Resolution / 10).ToArray();
+            var all = values;
+            var first = values.Take(Resolution / 10).ToArray();
+            return last.Concat(all).Concat(all).Concat(first).ToArray();
+        }
+    }
+
+    private int _indexesAtOne
+    {
+        get => values.Count(i => i == 1);
+        set
+        {
+            Array.Clear(values, 0, values.Length);
+            for (int i = 0; i < value && i < values.Length; i++)
+            {
+                values[i] = 1;
+            }
+        }
+    }
+
+    private double _indexesAtOnePercentage
+    {
+        get => ((double)_indexesAtOne / Resolution) * 100;
+    }
+
+    private double _dutyCycle
+    {
+        get => (double)_indexesAtOne / Resolution;
+        set => _indexesAtOne = (int)(value * Resolution);
+    }
+}

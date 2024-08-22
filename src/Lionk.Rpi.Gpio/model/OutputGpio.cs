@@ -10,7 +10,7 @@ namespace Lionk.Rpi.Gpio;
 /// <summary>
 /// This class represents an output GPIO component.
 /// </summary>
-[NamedElement("Output Gpio RPI4", "This component represent an Output Gpio from the Raspberry Pi 4")]
+[NamedElement("Output Gpio", "This component represent an Output Gpio")]
 public class OutputGpio : StandardIOGpio, IExecutableComponent
 {
     /// <summary>

@@ -14,11 +14,6 @@ public abstract class Gpio : BaseExecutableComponent
     /// <summary>
     /// Gets a value indicating whether the current plateform is a Raspberry Pi.
     /// </summary>
-    private readonly bool _isRpi;
-
-    /// <summary>
-    /// Gets a value indicating whether the current plateform is a Raspberry Pi.
-    /// </summary>
     protected bool IsRpi => RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
         && RuntimeInformation.OSDescription.Contains("raspberry", StringComparison.OrdinalIgnoreCase);
 

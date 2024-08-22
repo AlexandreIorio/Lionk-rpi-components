@@ -9,7 +9,7 @@ namespace Lionk.Rpi.Gpio;
 /// <summary>
 /// This class represents an input GPIO component.
 /// </summary>
-[NamedElement("Input Gpio RPI4", "This component represent an input Gpio from the Raspberry Pi 4")]
+[NamedElement("Input Gpio", "This component represent an input Gpio")]
 public class InputGpio : StandardIOGpio
 {
     /// <inheritdoc/>
