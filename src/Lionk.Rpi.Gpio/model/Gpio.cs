@@ -19,13 +19,13 @@ public abstract class Gpio : BaseExecutableComponent
     /// <summary>
     /// Gets a value indicating whether the current plateform is a Raspberry Pi.
     /// </summary>
-    protected bool IsRpi => _isRpi;
+    protected bool IsRpi => RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+        && RuntimeInformation.OSDescription.Contains("raspberry", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Gpio"/> class.
+    /// Gets a value indicating whether the current plateform is Windows.
     /// </summary>
-    protected Gpio() => _isRpi = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-        && RuntimeInformation.OSDescription.Contains("raspberry", StringComparison.OrdinalIgnoreCase);
+    protected bool IsWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
     /// <summary>
     /// Gets or sets the pin number of the GPIO component.

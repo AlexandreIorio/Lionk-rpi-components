@@ -22,9 +22,13 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
         {
             Controller = new Rpi4GpioController();
         }
-        else
+        else if (IsWindows)
         {
             Controller = new SimulatedGpioController();
+        }
+        else
+        {
+            throw new PlatformNotSupportedException();
         }
     }
 
