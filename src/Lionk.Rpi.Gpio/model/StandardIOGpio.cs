@@ -73,7 +73,13 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
     /// <summary>
     /// Closes the GPIO pin.
     /// </summary>
-    public void ClosePin() => Controller.ClosePin((int)Pin);
+    public void ClosePin()
+    {
+        if (Pin is Rpi4Gpio.None
+            || Controller is null
+            || !Controller.IsPinOpen((int)Pin)) return;
+        Controller.ClosePin((int)Pin);
+    }
 
     /// <summary>
     /// Method to open the GPIO pin.
@@ -91,11 +97,8 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
     {
         base.Dispose();
         ClosePin();
-        if (IsRpi && Controller is not null)
-        {
-            Controller.Dispose();
-            GC.SuppressFinalize(this);
-        }
+        Controller.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

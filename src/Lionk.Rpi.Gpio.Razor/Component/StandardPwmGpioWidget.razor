@@ -1,0 +1,24 @@
+﻿@namespace Lionk.Rpi.Gpio.View
+@using Lionk.Core.View
+@using Lionk.Rpi.Gpio
+@using MudBlazor
+@attribute [ViewOfAttribute("Pwm Gpio View", typeof(StandardPwmGpio), typeof(StandardPwmGpioWidget), ViewContext.Widget)]
+
+<PwmSignalDisplayer DutyCycle="@_dutyCycle"/>
+<MudText>Frequency [Hz] @_frequency </MudText>
+
+@code {
+    private int _frequency {
+        get => Component?.Frequency ?? 0;
+    }
+    private double _dutyCycle {
+        get => Component?.DutyCycle ?? 0.0;
+    }
+
+    [Parameter] public StandardPwmGpio? Component { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

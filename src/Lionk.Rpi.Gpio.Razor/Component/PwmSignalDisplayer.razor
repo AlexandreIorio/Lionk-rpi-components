@@ -4,8 +4,10 @@
 @using Microsoft.JSInterop
 @using MudBlazor
 
+@implements IDisposable
+
 <MudChart Style="width:100%" ChartType="ChartType.Line" ChartSeries="@_series" ChartOptions="@_options"/>
-<MudText Typo="Typo.h6" Style="text-align: center;">@_indexesAtOnePercentage %</MudText>
+<MudText Typo="Typo.h6" Style="text-align: center;">@((int)(_dutyCycle*100)) %</MudText>
 
 
 @code {
@@ -17,14 +19,14 @@
     public double DutyCycle { get; set; }
 
     [Parameter]
-    public int Resolution { get; set; } = 200;
+    public int Resolution { get; set; } = 1000;
 
     protected override void OnParametersSet()
     {
         values = new double[Resolution];
         one = Enumerable.Repeat(1.0, 1).ToArray();
         zero = Enumerable.Repeat(0.0, 1).ToArray();
-        _dutyCycle = DutyCycle;
+        _dutyCycle = Math.Round(DutyCycle,2);
         _series.Clear();
         _series.Add(new ChartSeries { Data = representation });
         _series.Add(new ChartSeries { Data = one });
@@ -32,6 +34,7 @@
         _options.YAxisTicks = 1;
         _options.YAxisLines = false;
         _options.ShowLegend = false;
+        GC.SuppressFinalize(this);
     }
 
     private double[] values = null!;
@@ -61,14 +64,17 @@
         }
     }
 
-    private double _indexesAtOnePercentage
-    {
-        get => ((double)_indexesAtOne / Resolution) * 100;
-    }
-
     private double _dutyCycle
     {
         get => (double)_indexesAtOne / Resolution;
         set => _indexesAtOne = (int)(value * Resolution);
+    }
+
+    public void Dispose()
+    {
+        values = null!;
+        one = null!;
+        zero = null!;
+        GC.SuppressFinalize(this);
     }
 }

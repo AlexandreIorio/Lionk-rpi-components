@@ -34,12 +34,10 @@ public class InputGpio : StandardIOGpio
         return value;
     }
 
-    /// <summary>
-    /// Reads the value of the GPIO pin.
-    /// </summary>
-    public new void Execute()
+    /// <inheritdoc/>
+    protected override void OnExecute(CancellationToken ct)
     {
-        base.Execute();
+        base.OnExecute(ct);
         Measure();
     }
 

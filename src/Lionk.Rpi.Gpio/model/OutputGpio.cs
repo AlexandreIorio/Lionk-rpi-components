@@ -2,7 +2,6 @@
 
 using System.Device.Gpio;
 using Lionk.Core;
-using Lionk.Core.Component;
 using Lionk.Core.DataModel;
 
 namespace Lionk.Rpi.Gpio;
@@ -11,7 +10,7 @@ namespace Lionk.Rpi.Gpio;
 /// This class represents an output GPIO component.
 /// </summary>
 [NamedElement("Output Gpio", "This component represent an Output Gpio")]
-public class OutputGpio : StandardIOGpio, IExecutableComponent
+public class OutputGpio : StandardIOGpio
 {
     /// <summary>
     /// Gets or sets the value of the GPIO pin.
@@ -34,8 +33,9 @@ public class OutputGpio : StandardIOGpio, IExecutableComponent
     }
 
     /// <inheritdoc/>
-    public new void Execute()
+    protected override void OnExecute(CancellationToken ct)
     {
+        base.OnExecute(ct);
         if (Pin is Rpi4Gpio.None || PinValue is null) return;
         Measure();
         WritePin(PinValue.Value);

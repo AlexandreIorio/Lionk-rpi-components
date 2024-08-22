@@ -13,8 +13,6 @@ public class Rpi4PwmGpio : StandardPwmGpio
 {
     private PwmChannel? _pwmChannel;
 
-    private Rpi4Gpio _pin = Rpi4Gpio.None;
-
     /// <inheritdoc/>
     public override bool CanExecute => base.CanExecute && _pwmChannel is not null;
 
@@ -32,7 +30,7 @@ public class Rpi4PwmGpio : StandardPwmGpio
         set
         {
             base.DutyCycle = value;
-            if (_pwmChannel is null) throw new InvalidOperationException("The PWM signal is not initialized.");
+            if (_pwmChannel is null) return;
             _pwmChannel.DutyCycle = base.DutyCycle;
         }
     }
@@ -54,12 +52,11 @@ public class Rpi4PwmGpio : StandardPwmGpio
     /// <inheritdoc/>
     public override Rpi4Gpio Pin
     {
-        get => _pin;
+        get => base.Pin;
         set
         {
-            if (!value.Is(GpioType.PWM)) throw new ArgumentException("The pin must be a PWM pin.");
-            _pin = value;
-            _pwmChannel = PwmChannel.Create(_pin.PwmChip(), _pin.PwmChannel(), Frequency, DutyCycle);
+            base.Pin = value;
+            _pwmChannel = PwmChannel.Create(base.Pin.PwmChip(), base.Pin.PwmChannel(), base.Frequency, base.DutyCycle);
         }
     }
 
@@ -72,12 +69,10 @@ public class Rpi4PwmGpio : StandardPwmGpio
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    /// Executes the component.
-    /// </summary>
-    public new void Execute()
+    /// <inheritdoc/>
+    protected override void OnExecute(CancellationToken ct)
     {
-        base.Execute();
+        base.OnExecute(ct);
         if (PwmOn) Start();
         else Stop();
     }
@@ -88,7 +83,10 @@ public class Rpi4PwmGpio : StandardPwmGpio
     public override void Start()
     {
         base.Start();
-        _pwmChannel?.Start();
+        if (_pwmChannel is null) return;
+        _pwmChannel.Frequency = base.Frequency;
+        _pwmChannel.DutyCycle = base.DutyCycle;
+        _pwmChannel.Start();
     }
 
     /// <summary>

@@ -8,7 +8,7 @@ namespace Lionk.Rpi.Gpio;
 public abstract class StandardPwmGpio : Gpio, IPwmChannel
 {
     private Rpi4Gpio _pin = Rpi4Gpio.None;
-    private int _frequency;
+    private int _frequency = 400;
     private double _dutyCycle;
 
     /// <inheritdoc/>
@@ -17,7 +17,7 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
         get => _pin;
         set
         {
-            if (!value.Is(GpioType.PWM)) throw new ArgumentException("The pin must be a PWM pin.");
+            if (!value.Is(GpioType.PWM)) return;
             _pin = value;
         }
     }
@@ -51,7 +51,7 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
         get => _frequency;
         set
         {
-            if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value), "The frequency must be a positive value.");
+            if (value <= 0) value = 1;
             _frequency = value;
         }
     }
