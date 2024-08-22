@@ -9,20 +9,6 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public class SimulatedPwmChannel : IPwmChannel
 {
-    private double _dutyCycle;
-    private int _frequency;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SimulatedPwmChannel"/> class.
-    /// </summary>
-    /// <param name="frequency">The initial frequency in hertz.</param>
-    /// <param name="dutyCycle">The initial duty cycle as a value between 0.0 and 1.0.</param>
-    public SimulatedPwmChannel(int frequency = 400, double dutyCycle = 0.5)
-    {
-        _frequency = frequency;
-        _dutyCycle = dutyCycle;
-    }
-
     /// <summary>
     /// Gets or sets the duty cycle represented as a value between 0.0 and 1.0.
     /// </summary>
