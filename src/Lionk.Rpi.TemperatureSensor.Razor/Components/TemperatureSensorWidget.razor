@@ -25,12 +25,12 @@ else
 
 @code {
 
-    [Parameter] public ComponentContainer? Container { get; set; }
+    [Parameter] public BaseTemperatureSensor? Component { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (Container?.Component is not null && Container.Component is BaseTemperatureSensor sensor)
+        if (Component is not null && Component is BaseTemperatureSensor sensor)
         {
             sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
         }
@@ -38,10 +38,9 @@ else
 
     private string GetTemperature(int roundDecimal = 2)
     {
-        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Container?.Component;
-        if (sensor is null) return "No data";
-        double value = sensor.Measures[(int)sensor.TemperatureType].Value;
-        string unit = sensor.Measures[(int)sensor.TemperatureType].Unit;
+        if (Component is null) return "No data";
+        double value = Component.Get;
+        string unit = Component.Measures[(int)sensor.TemperatureType].Unit;
         string temperature = value == double.NaN ? "No data" : Math.Round(value, roundDecimal).ToString() + " " + unit;
         return temperature;
     }

@@ -50,4 +50,17 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
         Period = TimeSpan.FromSeconds(5);
         base.OnInitialize();
     }
+
+    /// <summary>
+    /// This method is used to set the temperature of the sensor.
+    /// </summary>
+    /// <param name="nbDecimal"> The number of decimal to keep.</param>
+    /// <returns> The value of the temperature.</returns>
+    public double GetTemperature(int nbDecimal = 2) => Math.Round(Measures[(int)TemperatureType].Value, nbDecimal);
+
+    /// <summary>
+    /// This method is used to get the unit of the temperature.
+    /// </summary>
+    /// <returns> The unit of the temperature.</returns>
+    public string GetUnit() => Measures[(int)TemperatureType].Unit;
 }
