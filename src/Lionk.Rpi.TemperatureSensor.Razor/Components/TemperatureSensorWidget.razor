@@ -9,13 +9,13 @@
 @namespace Lionk.TemperatureSensor
 @attribute [ViewOfAttribute("Simple temperature widget", typeof(BaseTemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
 
-@if (Container?.Component is null)
+@if (Component is null)
 {
     <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
 }
 else
 {
-    if (Container?.Component is BaseTemperatureSensor sensor)
+    if (Component is BaseTemperatureSensor sensor)
     {
         <MudText Typo="Typo.h6" Class="bi bi-thermometer-half text-center">@sensor.InstanceName</MudText>
         <MudText Typo="Typo.body1">@GetTemperature()</MudText>
@@ -39,17 +39,16 @@ else
     private string GetTemperature(int roundDecimal = 2)
     {
         if (Component is null) return "No data";
-        double value = Component.Get;
-        string unit = Component.Measures[(int)sensor.TemperatureType].Unit;
-        string temperature = value == double.NaN ? "No data" : Math.Round(value, roundDecimal).ToString() + " " + unit;
+        double value = Component?.GetTemperature() ?? double.NaN;
+        string unit = Component?.GetUnit() ?? string.Empty;
+        string temperature = value == double.NaN ? "No data" : value + " " + unit;
         return temperature;
     }
 
     private string GetTime()
     {
-        BaseTemperatureSensor? sensor = (BaseTemperatureSensor?)Container?.Component;
-        if (sensor is null) return "No data";
+        if (Component is null) return "No data";
 
-        return sensor.Measures[(int)sensor.TemperatureType].Time.ToString() ?? "No data";
+        return Component.GetTime().ToString("dd.MM.yyyy HH:mm:ss");
     }
 }
