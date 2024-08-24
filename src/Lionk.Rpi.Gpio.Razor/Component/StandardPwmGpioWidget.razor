@@ -29,6 +29,6 @@
 
     private void Changed(object? sender, PropertyChangedEventArgs e)
     {
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
     }
 }
