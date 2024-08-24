@@ -21,8 +21,9 @@
     [Parameter]
     public int Resolution { get; set; } = 1000;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
         values = new double[Resolution];
         one = Enumerable.Repeat(1.0, 1).ToArray();
         zero = Enumerable.Repeat(0.0, 1).ToArray();
@@ -34,7 +35,6 @@
         _options.YAxisTicks = 1;
         _options.YAxisLines = false;
         _options.ShowLegend = false;
-        GC.SuppressFinalize(this);
     }
 
     private double[] values = null!;
