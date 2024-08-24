@@ -14,6 +14,7 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
     private double _dutyCycle;
     private int _frequency = 400;
     private Rpi4Gpio _pin = Rpi4Gpio.None;
+    private bool _pwmOn;
 
     #endregion Private Fields
 
@@ -68,8 +69,11 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
     /// <summary>
     /// Gets or sets a value indicating whether the PWM signal is on. If <see langword="true"/>, the PWM signal is on; otherwise, it is off.
     /// </summary>
-    [JsonIgnore]
-    public bool PwmOn { get; set; } = false;
+    public bool PwmOn
+    {
+        get => _pwmOn;
+        set => SetField(ref _pwmOn, value);
+    }
 
     #endregion Public Properties
 
