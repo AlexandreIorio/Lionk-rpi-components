@@ -3,6 +3,7 @@
 @using Lionk.Rpi.Gpio
 @using Microsoft.JSInterop
 @using MudBlazor
+@using System.ComponentModel
 
 @implements IDisposable
 
@@ -16,7 +17,7 @@
 
 
     [Parameter]
-    public double DutyCycle { get; set; }
+    public StandardPwmGpio Component { get; set; } = null!;
 
     [Parameter]
     public int Resolution { get; set; } = 1000;
@@ -24,10 +25,12 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        if (Component == null) throw new ArgumentNullException(nameof(Component));
         values = new double[Resolution];
         one = Enumerable.Repeat(1.0, 1).ToArray();
         zero = Enumerable.Repeat(0.0, 1).ToArray();
-        _dutyCycle = Math.Round(DutyCycle,2);
+
+        _dutyCycle = Math.Round(Component.DutyCycle,2);
         _series.Clear();
         _series.Add(new ChartSeries { Data = representation });
         _series.Add(new ChartSeries { Data = one });
@@ -35,6 +38,14 @@
         _options.YAxisTicks = 1;
         _options.YAxisLines = false;
         _options.ShowLegend = false;
+        Component.PropertyChanged += Changed;
+    }
+
+    private void Changed(object? sender, PropertyChangedEventArgs e)
+    {
+        _dutyCycle = Math.Round(Component.DutyCycle,2);
+        _series[0].Data = representation;
+        InvokeAsync(StateHasChanged);
     }
 
     private double[] values = null!;
@@ -75,6 +86,5 @@
         values = null!;
         one = null!;
         zero = null!;
-        GC.SuppressFinalize(this);
     }
 }

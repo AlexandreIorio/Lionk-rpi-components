@@ -4,85 +4,33 @@
 @using MudBlazor
 @attribute [ViewOfAttribute("Pwm Gpio Configuration", typeof(StandardPwmGpio), typeof(StandardPwmGpioConfig), ViewContext.Configuration)]
 
-<MudSelect Label="GPIO" T="Rpi.Gpio.Rpi4Gpio" @bind-value="_pin" >
+<MudSelect Label="GPIO" T="Rpi.Gpio.Rpi4Gpio" @bind-value="Component.Pin">
     @foreach (var pin in _pwmGpio)
     {
         <MudSelectItem Value="@pin">@pin</MudSelectItem>
     }
 </MudSelect>
 
-<MudTextField Label="Frequency" @bind-Value=" _frequency" T="int" />
-<MudTextField Label="DutyCycle %" @bind-Value=" _dutyCycle" T="int" />
-
-<MudSwitch Label="Enable" @bind-Value="_enabled"/>
-<MudBadge Color="@(_enabled ? Color.Success : Color.Default)" >@(_enabled ? "On" : "Off")</MudBadge>
+<MudTextField Label="Frequency" @bind-Value=" Component.Frequency" T="int" />
+<MudTextField Label="DutyCycle %" @bind-Value="_dutyCycle" T="int" />
+<MudSwitch Label="Enable" @bind-Value="Component.PwmOn" />
 
 @code {
 
-    [Parameter] public StandardPwmGpio? Component { get; set; }
+    [Parameter] public StandardPwmGpio Component { get; set; } = null!;
 
     private List<Rpi4Gpio> _pwmGpio = new();
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        if (Component == null) throw new ArgumentNullException(nameof(Component));
         _pwmGpio = Enum.GetValues(typeof(Rpi4Gpio)).Cast<Rpi.Gpio.Rpi4Gpio>().Where(g => g.Is(GpioType.PWM)).ToList();
-    }
-
-    private Rpi4Gpio _pin
-    {
-        get => Component?.Pin ?? Rpi4Gpio.None;
-        set
-        {
-            if (Component != null)
-            {
-                Component.Pin = value;
-            }
-        }
-    }
-
-    private bool _enabled
-    {
-        get => Component?.PwmOn ?? false;
-        set
-        {
-            if (Component != null)
-            {
-                Component.PwmOn = value;
-            }
-        }
-    }
-
-    private int _frequency
-    {
-        get => Component?.Frequency ?? 0;
-        set
-        {
-            if (Component != null)
-            {
-                Component.Frequency = value;
-            }
-        }
     }
 
     private int _dutyCycle
     {
-        get
-        {
-            if (Component != null)
-            {
-                return (int)(Component.DutyCycle * 100);
-            }
-            return 0;
-        
-        }
-        set
-        {
-            if (Component != null)
-            {
-                Component.DutyCycle = (double)value/100;
-            }
-        }
+        get => (int)(Component.DutyCycle * 100);
+        set => Component.DutyCycle = (double)value / 100;
     }
-
 }

@@ -1,7 +1,5 @@
 ﻿// Copyright © 2024 Lionk Project
 
-using Newtonsoft.Json;
-
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
@@ -38,7 +36,7 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
             if (value > 1) dutyCycle = 1;
             else if (value < 0) dutyCycle = 0;
             else dutyCycle = value;
-            _dutyCycle = dutyCycle;
+            SetField(ref _dutyCycle, dutyCycle);
         }
     }
 
