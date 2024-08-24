@@ -11,7 +11,13 @@ namespace Lionk.Rpi.Gpio;
 [NamedElement("PWM Gpio generator Rpi4", "This component represent a PWM Gpio generator from the Raspberry Pi 4")]
 public class Rpi4PwmGpio : StandardPwmGpio
 {
+    #region Private Fields
+
     private PwmChannel? _pwmChannel;
+
+    #endregion Private Fields
+
+    #region Public Properties
 
     /// <inheritdoc/>
     public override bool CanExecute => base.CanExecute && _pwmChannel is not null;
@@ -21,11 +27,7 @@ public class Rpi4PwmGpio : StandardPwmGpio
     /// </summary>
     public new double DutyCycle
     {
-        get
-        {
-            if (_pwmChannel is null) return -1;
-            return _pwmChannel.DutyCycle;
-        }
+        get => base.DutyCycle;
 
         set
         {
@@ -40,7 +42,7 @@ public class Rpi4PwmGpio : StandardPwmGpio
     /// </summary>
     public new int Frequency
     {
-        get => _pwmChannel?.Frequency ?? -1;
+        get => base.Frequency;
         set
         {
             base.Frequency = value;
@@ -60,14 +62,9 @@ public class Rpi4PwmGpio : StandardPwmGpio
         }
     }
 
-    /// <inheritdoc/>
-    public override void Dispose()
-    {
-        Stop();
-        _pwmChannel?.Dispose();
-        _pwmChannel = null;
-        GC.SuppressFinalize(this);
-    }
+    #endregion Public Properties
+
+    #region Protected Methods
 
     /// <inheritdoc/>
     protected override void OnExecute(CancellationToken ct)
@@ -75,6 +72,19 @@ public class Rpi4PwmGpio : StandardPwmGpio
         base.OnExecute(ct);
         if (PwmOn) Start();
         else Stop();
+    }
+
+    #endregion Protected Methods
+
+    #region Public Methods
+
+    /// <inheritdoc/>
+    public override void Dispose()
+    {
+        Stop();
+        _pwmChannel?.Dispose();
+        _pwmChannel = null;
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -97,4 +107,6 @@ public class Rpi4PwmGpio : StandardPwmGpio
         base.Stop();
         _pwmChannel?.Stop();
     }
+
+    #endregion Public Methods
 }

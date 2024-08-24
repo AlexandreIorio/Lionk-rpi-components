@@ -9,25 +9,29 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public interface IGpioController
 {
-    void OpenPin(int pinNumber);
-
-    void OpenPin(int pinNumber, PinMode mode);
+    #region Public Methods
 
     void ClosePin(int pinNumber);
 
-    bool IsPinOpen(int pinNumber);
-
-    void SetPinMode(int pinNumber, PinMode mode);
+    void Dispose();
 
     PinMode GetPinMode(int pinNumber);
 
     bool IsPinModeSupported(int pinNumber, PinMode mode);
 
+    bool IsPinOpen(int pinNumber);
+
+    void OpenPin(int pinNumber);
+
+    void OpenPin(int pinNumber, PinMode mode);
+
     PinValue Read(int pinNumber);
 
-    void Write(int pinNumber, PinValue value);
+    void SetPinMode(int pinNumber, PinMode mode);
 
     void Toggle(int pinNumber);
 
-    void Dispose();
+    void Write(int pinNumber, PinValue value);
+
+    #endregion Public Methods
 }

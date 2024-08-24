@@ -9,12 +9,22 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public class Rpi4GpioController : IGpioController
 {
+    #region Private Fields
+
     private readonly GpioController _controller;
+
+    #endregion Private Fields
+
+    #region Public Constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Rpi4GpioController"/> class.
     /// </summary>
     public Rpi4GpioController() => _controller = new GpioController();
+
+    #endregion Public Constructors
+
+    #region Public Methods
 
     /// <summary>
     /// Method to close a pin.
@@ -86,4 +96,6 @@ public class Rpi4GpioController : IGpioController
     /// <param name="pinNumber"> The pin number to write. </param>
     /// <param name="value"> The value to write. </param>
     public void Write(int pinNumber, PinValue value) => _controller.Write(pinNumber, value);
+
+    #endregion Public Methods
 }

@@ -7,6 +7,8 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public interface IPwmChannel : IDisposable
 {
+    #region Public Properties
+
     /// <summary>
     /// Gets or sets the duty cycle represented as a value between 0.0 and 1.0.
     /// </summary>
@@ -22,6 +24,10 @@ public interface IPwmChannel : IDisposable
     /// </summary>
     bool IsRunning { get; }
 
+    #endregion Public Properties
+
+    #region Public Methods
+
     /// <summary>
     /// Starts the PWM channel.
     /// </summary>
@@ -31,4 +37,6 @@ public interface IPwmChannel : IDisposable
     /// Stops the PWM channel.
     /// </summary>
     void Stop();
+
+    #endregion Public Methods
 }

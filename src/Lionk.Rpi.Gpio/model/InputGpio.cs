@@ -12,8 +12,7 @@ namespace Lionk.Rpi.Gpio;
 [NamedElement("Input Gpio", "This component represent an input Gpio")]
 public class InputGpio : StandardIOGpio
 {
-    /// <inheritdoc/>
-    public override bool CanExecute => IsOpenPin();
+    #region Public Constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InputGpio"/> class.
@@ -21,6 +20,40 @@ public class InputGpio : StandardIOGpio
     public InputGpio()
         : base()
         => Mode = PinMode.Input;
+
+    #endregion Public Constructors
+
+    #region Public Properties
+
+    /// <inheritdoc/>
+    public override bool CanExecute => IsOpenPin();
+
+    #endregion Public Properties
+
+    #region Protected Methods
+
+    /// <inheritdoc/>
+    protected override void OnExecute(CancellationToken ct)
+    {
+        base.OnExecute(ct);
+        Measure();
+    }
+
+    #endregion Protected Methods
+
+    #region Public Methods
+
+    /// <summary>
+    /// Measures the value of the GPIO pin.
+    /// </summary>
+    public override void Measure()
+    {
+        if (Measures is null) return;
+        int value = (int?)ReadPin() ?? -1;
+        Measures.Clear();
+        Measures.Add(new Measure<int>("value", DateTime.Now, "state", value));
+        OnNewValueAvailable(new MeasureEventArgs<int>(Measures));
+    }
 
     /// <summary>
     /// Reads the value of the GPIO pin.
@@ -34,22 +67,5 @@ public class InputGpio : StandardIOGpio
         return value;
     }
 
-    /// <inheritdoc/>
-    protected override void OnExecute(CancellationToken ct)
-    {
-        base.OnExecute(ct);
-        Measure();
-    }
-
-    /// <summary>
-    /// Measures the value of the GPIO pin.
-    /// </summary>
-    public override void Measure()
-    {
-        if (Measures is null) return;
-        int value = (int?)ReadPin() ?? -1;
-        Measures.Clear();
-        Measures.Add(new Measure<int>("value", DateTime.Now, "state", value));
-        OnNewValueAvailable(new MeasureEventArgs<int>(Measures));
-    }
+    #endregion Public Methods
 }

@@ -1,5 +1,7 @@
 ﻿// Copyright © 2024 Lionk Project
 
+using Newtonsoft.Json;
+
 namespace Lionk.Rpi.Gpio;
 
 /// <summary>
@@ -7,25 +9,21 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public abstract class StandardPwmGpio : Gpio, IPwmChannel
 {
-    private Rpi4Gpio _pin = Rpi4Gpio.None;
-    private int _frequency = 400;
+    #region Private Fields
+
     private double _dutyCycle;
+    private int _frequency = 400;
+    private Rpi4Gpio _pin = Rpi4Gpio.None;
+
+    #endregion Private Fields
+
+    #region Public Properties
 
     /// <inheritdoc/>
-    public override Rpi4Gpio Pin
-    {
-        get => _pin;
-        set
-        {
-            if (!value.Is(GpioType.PWM)) return;
-            _pin = value;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the PWM signal is on. If <see langword="true"/>, the PWM signal is on; otherwise, it is off.
-    /// </summary>
-    public bool PwmOn { get; set; } = false;
+    public override bool CanExecute => Pin is not Rpi4Gpio.None
+                                       && DutyCycle >= 0
+                                       && DutyCycle <= 1
+                                       && Frequency > 0;
 
     /// <summary>
     /// Gets or sets the duty cycle of the PWM signal as a value between 0.0 and 1.0.
@@ -52,9 +50,30 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
         set
         {
             if (value <= 0) value = 1;
-            _frequency = value;
+            SetField(ref _frequency, value);
         }
     }
+
+    /// <inheritdoc/>
+    public override Rpi4Gpio Pin
+    {
+        get => _pin;
+        set
+        {
+            if (!value.Is(GpioType.PWM)) return;
+            SetField(ref _pin, value);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the PWM signal is on. If <see langword="true"/>, the PWM signal is on; otherwise, it is off.
+    /// </summary>
+    [JsonIgnore]
+    public bool PwmOn { get; set; } = false;
+
+    #endregion Public Properties
+
+    #region Public Methods
 
     /// <summary>
     /// Method to start the PWM signal.
@@ -66,9 +85,5 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
     /// </summary>
     public virtual void Stop() => PwmOn = false;
 
-    /// <inheritdoc/>
-    public override bool CanExecute => Pin is not Rpi4Gpio.None
-                                       && DutyCycle >= 0
-                                       && DutyCycle <= 1
-                                       && Frequency > 0;
+    #endregion Public Methods
 }

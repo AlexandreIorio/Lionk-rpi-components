@@ -12,10 +12,17 @@ namespace Lionk.Rpi.Gpio;
 [NamedElement("Output Gpio", "This component represent an Output Gpio")]
 public class OutputGpio : StandardIOGpio
 {
+    #region Public Constructors
+
     /// <summary>
-    /// Gets or sets the value of the GPIO pin.
+    /// Initializes a new instance of the <see cref="OutputGpio"/> class.
     /// </summary>
-    public PinValue? PinValue { get; set; }
+    public OutputGpio()
+        : base() => Mode = PinMode.Output;
+
+    #endregion Public Constructors
+
+    #region Public Properties
 
     /// <summary>
     /// Gets a value indicating whether the component can be executed.
@@ -23,14 +30,13 @@ public class OutputGpio : StandardIOGpio
     public override bool CanExecute => IsOpenPin();
 
     /// <summary>
-    /// Reads the value of the GPIO pin.
+    /// Gets or sets the value of the GPIO pin.
     /// </summary>
-    /// <param name="value"> The value to write to the GPIO pin. </param>
-    public void WritePin(PinValue value)
-    {
-        if (Pin is Rpi4Gpio.None) return;
-        Controller.Write((int)Pin, value);
-    }
+    public PinValue? PinValue { get; set; }
+
+    #endregion Public Properties
+
+    #region Protected Methods
 
     /// <inheritdoc/>
     protected override void OnExecute(CancellationToken ct)
@@ -40,6 +46,10 @@ public class OutputGpio : StandardIOGpio
         Measure();
         WritePin(PinValue.Value);
     }
+
+    #endregion Protected Methods
+
+    #region Public Methods
 
     /// <inheritdoc/>
     public override void Measure()
@@ -51,8 +61,14 @@ public class OutputGpio : StandardIOGpio
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="OutputGpio"/> class.
+    /// Reads the value of the GPIO pin.
     /// </summary>
-    public OutputGpio()
-        : base() => Mode = PinMode.Output;
+    /// <param name="value"> The value to write to the GPIO pin. </param>
+    public void WritePin(PinValue value)
+    {
+        if (Pin is Rpi4Gpio.None) return;
+        Controller.Write((int)Pin, value);
+    }
+
+    #endregion Public Methods
 }

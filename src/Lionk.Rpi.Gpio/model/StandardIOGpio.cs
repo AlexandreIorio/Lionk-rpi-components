@@ -11,7 +11,13 @@ namespace Lionk.Rpi.Gpio;
 /// </summary>
 public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
 {
+    #region Private Fields
+
     private Rpi4Gpio _pin = Rpi4Gpio.None;
+
+    #endregion Private Fields
+
+    #region Public Constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StandardIOGpio"/> class.
@@ -32,13 +38,35 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
         }
     }
 
+    #endregion Public Constructors
+
+    #region Public Events
+
     /// <inheritdoc/>
     public event EventHandler<MeasureEventArgs<int>>? NewValueAvailable;
+
+    #endregion Public Events
+
+    #region Protected Properties
+
+    /// <summary>
+    /// Gets the pin number of the GPIO component.
+    /// </summary>
+    protected IGpioController Controller { get; }
+
+    #endregion Protected Properties
+
+    #region Public Properties
 
     /// <summary>
     /// Gets the measures of the GPIO component.
     /// </summary>
     public List<Measure<int>> Measures { get; } = [];
+
+    /// <summary>
+    /// Gets or sets the pin mode of the GPIO component.
+    /// </summary>
+    public PinMode Mode { get; protected set; }
 
     /// <summary>
     /// Gets or sets the pin number of the GPIO component.
@@ -60,15 +88,20 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
         }
     }
 
-    /// <summary>
-    /// Gets the pin number of the GPIO component.
-    /// </summary>
-    protected IGpioController Controller { get; }
+    #endregion Public Properties
+
+    #region Protected Methods
 
     /// <summary>
-    /// Gets or sets the pin mode of the GPIO component.
+    /// Raises the <see cref="NewValueAvailable"/> event.
     /// </summary>
-    protected PinMode Mode { get; set; }
+    /// <param name="e">The event arg.</param>
+    protected void OnNewValueAvailable(MeasureEventArgs<int> e)
+        => NewValueAvailable?.Invoke(this, e);
+
+    #endregion Protected Methods
+
+    #region Public Methods
 
     /// <summary>
     /// Closes the GPIO pin.
@@ -81,17 +114,6 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
         Controller.ClosePin((int)Pin);
     }
 
-    /// <summary>
-    /// Method to open the GPIO pin.
-    /// </summary>
-    public void OpenPin() => Controller.OpenPin((int)Pin, Mode);
-
-    /// <summary>
-    /// Method to check if the GPIO pin is open.
-    /// </summary>
-    /// <returns> True if the GPIO pin is open, false otherwise. </returns>
-    public bool IsOpenPin() => Controller.IsPinOpen((int)Pin);
-
     /// <inheritdoc/>
     public override void Dispose()
     {
@@ -102,14 +124,20 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
     }
 
     /// <summary>
+    /// Method to check if the GPIO pin is open.
+    /// </summary>
+    /// <returns> True if the GPIO pin is open, false otherwise. </returns>
+    public bool IsOpenPin() => Controller.IsPinOpen((int)Pin);
+
+    /// <summary>
     /// Measures the value of the GPIO pin.
     /// </summary>
     public abstract void Measure();
 
     /// <summary>
-    /// Raises the <see cref="NewValueAvailable"/> event.
+    /// Method to open the GPIO pin.
     /// </summary>
-    /// <param name="e">The event arg.</param>
-    protected void OnNewValueAvailable(MeasureEventArgs<int> e)
-        => NewValueAvailable?.Invoke(this, e);
+    public void OpenPin() => Controller.OpenPin((int)Pin, Mode);
+
+    #endregion Public Methods
 }
