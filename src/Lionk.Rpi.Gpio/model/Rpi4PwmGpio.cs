@@ -22,35 +22,6 @@ public class Rpi4PwmGpio : StandardPwmGpio
     /// <inheritdoc/>
     public override bool CanExecute => base.CanExecute && _pwmChannel is not null;
 
-    /// <summary>
-    /// Gets or sets the duty cycle of the PWM signal (0.0 to 1.0), -1 if the PWM signal is not initialized.
-    /// </summary>
-    public new double DutyCycle
-    {
-        get => base.DutyCycle;
-
-        set
-        {
-            base.DutyCycle = value;
-            if (_pwmChannel is null) return;
-            _pwmChannel.DutyCycle = base.DutyCycle;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the frequency of the PWM signal in Hertz.
-    /// </summary>
-    public new int Frequency
-    {
-        get => base.Frequency;
-        set
-        {
-            base.Frequency = value;
-            if (_pwmChannel is null) throw new InvalidOperationException("The PWM signal is not initialized.");
-            _pwmChannel.Frequency = base.Frequency;
-        }
-    }
-
     /// <inheritdoc/>
     public override Rpi4Gpio Pin
     {
@@ -58,7 +29,7 @@ public class Rpi4PwmGpio : StandardPwmGpio
         set
         {
             base.Pin = value;
-            _pwmChannel = PwmChannel.Create(base.Pin.PwmChip(), base.Pin.PwmChannel(), base.Frequency, base.DutyCycle);
+            _pwmChannel = PwmChannel.Create(base.Pin.PwmChip(), base.Pin.PwmChannel(), Frequency, DutyCycle);
         }
     }
 
@@ -94,8 +65,8 @@ public class Rpi4PwmGpio : StandardPwmGpio
     {
         base.Start();
         if (_pwmChannel is null) return;
-        _pwmChannel.Frequency = base.Frequency;
-        _pwmChannel.DutyCycle = base.DutyCycle;
+        _pwmChannel.Frequency = Frequency;
+        _pwmChannel.DutyCycle = DutyCycle;
         _pwmChannel.Start();
     }
 
