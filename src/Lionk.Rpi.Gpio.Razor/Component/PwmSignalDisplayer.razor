@@ -25,8 +25,8 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (Component == null) throw new ArgumentNullException(nameof(Component));
         values = new double[Resolution];
+        if (Component == null) throw new ArgumentNullException(nameof(Component));
         one = Enumerable.Repeat(1.0, 1).ToArray();
         zero = Enumerable.Repeat(0.0, 1).ToArray();
 
@@ -55,6 +55,7 @@
     {
         get
         {
+            if (values is null) return new double[0];
             var last = values.Skip(values.Length - Resolution / 10).ToArray();
             var all = values;
             var first = values.Take(Resolution / 10).ToArray();
@@ -67,6 +68,7 @@
         get => values.Count(i => i == 1);
         set
         {
+            if (values is null) return;
             Array.Clear(values, 0, values.Length);
             for (int i = 0; i < value && i < values.Length; i++)
             {
