@@ -55,6 +55,6 @@ else
         if (e is null) return;
 
         _value = e.Measures.First().Value;
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
     }
 }
