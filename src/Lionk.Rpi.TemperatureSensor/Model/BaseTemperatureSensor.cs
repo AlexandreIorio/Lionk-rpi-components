@@ -42,6 +42,13 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
     public double GetTemperature(int nbDecimal = 2) => Math.Round(Measures[(int)TemperatureType].Value, nbDecimal);
 
     /// <summary>
+    /// Method to get the temperature as a string.
+    /// </summary>
+    /// <param name="nbDecimal"> The number of decimal to keep. Default is 2. </param>
+    /// <returns> The temperature as a string. </returns>
+    public string GetTemperatureString(int nbDecimal = 2) => GetTemperature(nbDecimal) + GetUnit();
+
+    /// <summary>
     /// Method to get the unit of the temperature.
     /// </summary>
     /// <returns> The unit of the temperature. </returns>
