@@ -1,5 +1,6 @@
 ﻿// Copyright © 2024 Lionk Project
 
+using System.ComponentModel.DataAnnotations;
 using System.Device.Gpio;
 using Lionk.Core;
 using Lionk.Core.DataModel;
@@ -19,7 +20,13 @@ public class InputGpio : StandardIOGpio
     /// </summary>
     public InputGpio()
         : base()
-        => Mode = PinMode.Input;
+    {
+        Mode = PinMode.Input;
+        if (Controller is not null && Pin is not Rpi4Gpio.None)
+        {
+            Measure();
+        }
+    }
 
     #endregion Public Constructors
 

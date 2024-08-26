@@ -18,7 +18,15 @@ public class OutputGpio : StandardIOGpio
     /// Initializes a new instance of the <see cref="OutputGpio"/> class.
     /// </summary>
     public OutputGpio()
-        : base() => Mode = PinMode.Output;
+        : base()
+    {
+        Mode = PinMode.Output;
+        if (Controller is not null && Pin is not Rpi4Gpio.None)
+        {
+            PinValue = Controller.Read((int)Pin);
+            Measure();
+        }
+    }
 
     #endregion Public Constructors
 
