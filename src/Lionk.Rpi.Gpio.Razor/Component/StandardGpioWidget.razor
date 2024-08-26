@@ -12,7 +12,6 @@
 }
 else
 {
-    <MudText Typo="Typo.h6" Class="@_icon">@Component.InstanceName</MudText>
     @if (_value > 0)
     {
         <MudChip T="string" Color="Color.Success">Active</MudChip>
@@ -21,6 +20,10 @@ else
     {
         <MudChip T="string" Color="Color.Dark">Inactive</MudChip>
     }
+
+    Color color = Component.Pin is Rpi4Gpio.None ? Color.Warning : Color.Success;
+
+    <MudChip Color="color" T="string">@Component.Pin.ToString()</MudChip>
 }
 
 
@@ -29,25 +32,19 @@ else
 
     [Parameter] public StandardIOGpio? Component { get; set; }
 
-    private string _icon = "";
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
         if (Component != null)
         {
-            switch (Component)
-            {
-                case InputGpio:
-                    _icon = "bi bi-box-arrow-in-down";
-                    break;
-                case OutputGpio:
-                    _icon = "bi bi-box-arrow-up";
-                    break;
-            }
-
             Component.NewValueAvailable += GpioNewValueAvailable;
+            Component.PropertyChanged += OnPropertyChange;
         }
+    }
+
+    private void OnPropertyChange(object? sender, EventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
     }
 
     public void GpioNewValueAvailable(object? sender, MeasureEventArgs<int> e)

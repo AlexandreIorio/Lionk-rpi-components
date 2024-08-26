@@ -1,0 +1,88 @@
+﻿@using Lionk.Core.Component
+@using Lionk.Core.DataModel
+@using Lionk.Core.View
+@using MudBlazor
+@using Lionk.Core
+@using System.Device.Gpio
+@namespace Lionk.Rpi.Gpio.View
+@attribute [ViewOfAttribute("Simulate Signal on Gpio", typeof(StandardIOGpio), typeof(SimulatedIOSignalOnGpio), ViewContext.Widget)]
+@if (_simulatedGpioController is null)
+{
+    <MudText Typo="Typo.body1">Incompatible component use a real signal</MudText>
+}
+else
+{
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SimulatePressed">Simulate</MudButton>
+    <MudCheckBox Label="Rising signal" T="bool" @bind-Value="_risingSignal" />
+    <MudCheckBox Label="Falling signal" T="bool" @bind-Value="_fallingSignal" />
+    <MudChip T="string">Catched signal: @_catchedSignalTypes.ToString() on @Component.Pin.ToString()</MudChip>
+}
+
+@code {
+
+    [Parameter] public StandardIOGpio Component { get; set; } = null!;
+
+    private SimulatedGpioController? _simulatedGpioController;
+    private bool _risingSignal
+    {
+        get => _signal == PinEventTypes.Rising || _signal == (PinEventTypes.Rising | PinEventTypes.Falling);
+        set
+        {
+            if (value)
+            {
+                _signal = PinEventTypes.Rising | _signal;
+            }
+            else
+            {
+                _signal = PinEventTypes.Rising ^ _signal;
+            }
+            _simulatedGpioController?.RegisterCallbackForPinValueChangedEvent(Component.Pin, _signal);
+        }
+
+    }
+    private bool _fallingSignal
+    {
+        get => _signal == PinEventTypes.Falling || _signal == (PinEventTypes.Rising | PinEventTypes.Falling);
+        set
+        {
+            if (value)
+            {
+                _signal = PinEventTypes.Falling | _signal;
+            }
+            else
+            {
+                _signal = PinEventTypes.Falling ^ _signal;
+            }
+            _simulatedGpioController?.RegisterCallbackForPinValueChangedEvent(Component.Pin, _signal);
+        }
+    }
+
+    private PinEventTypes _signal;
+    private PinEventTypes _catchedSignalTypes;
+
+    protected override void OnInitialized()
+    {
+        if (Component is null) throw new ArgumentException("Component must be set");
+        if (Component.Controller is SimulatedGpioController simulatedGpioController)
+        {
+            _simulatedGpioController = simulatedGpioController;
+            _simulatedGpioController.RegisterCallbackForPinValueChangedEvent(Component.Pin, _signal);
+            _simulatedGpioController.PinValueChanged += ChangedValue;
+        }
+        base.OnInitialized();
+    }
+
+
+    private void SimulatePressed()
+    {
+        if (_simulatedGpioController is null) return;
+        _simulatedGpioController.PinValueChangedCallEvent((int)Component.Pin, _signal);
+    }
+
+    private void ChangedValue(object? sender, PinValueChangedEventArgs e)
+    {
+        _catchedSignalTypes = e.ChangeType;
+        InvokeAsync(StateHasChanged);
+    }
+
+}

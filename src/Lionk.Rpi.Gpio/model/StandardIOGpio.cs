@@ -52,7 +52,7 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
     /// <summary>
     /// Gets the pin number of the GPIO component.
     /// </summary>
-    protected IGpioController Controller { get; }
+    public BaseGpioController Controller { get; }
 
     #endregion Protected Properties
 
@@ -76,7 +76,7 @@ public abstract class StandardIOGpio : Gpio, IMeasurableComponent<int>
         get => _pin;
         set
         {
-            if (value is Rpi4Gpio.None) return;
+            if (value is Rpi4Gpio.None || _pin == value) return;
 
             Rpi4Gpio oldValue = _pin;
 
