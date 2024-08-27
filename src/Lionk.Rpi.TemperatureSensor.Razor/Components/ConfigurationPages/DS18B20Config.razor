@@ -4,15 +4,15 @@
 @namespace Lionk.TemperatureSensor
 @attribute [ViewOfAttribute("DS18B20 Configuration", typeof(DS18B20), typeof(DS18B20Config), ViewContext.Configuration)]
 
-<MudTextField @bind-Value="_component.InstanceName" Label="Name" />
-<MudSelect @bind-Value="_component.Address" Label="Bus Address">
+<MudTextField @bind-Value="Component.InstanceName" Label="Name" />
+<MudSelect @bind-Value="Component.Address" Label="Bus Address">
     @foreach (var address in DS18B20.ConnectedSensors())
     {
         <MudSelectItem Value="@address">@address</MudSelectItem>
     }
 </MudSelect>
 
-<MudRadioGroup @bind-Value="_component.TemperatureType">
+<MudRadioGroup @bind-Value="Component.TemperatureType">
     @foreach (TemperatureType type in Enum.GetValues(typeof(TemperatureType)))
     {
         <MudRadio Value="@type">@type.GetUnit()</MudRadio>
@@ -20,13 +20,11 @@
 </MudRadioGroup>
 
 @code {
-    [Parameter] public DS18B20? Component { get; set; }
-    private DS18B20 _component = new();
+    [Parameter] public DS18B20 Component { get; set; } = null!;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         ArgumentNullException.ThrowIfNull(Component);
-        _component = Component;
     }
 }

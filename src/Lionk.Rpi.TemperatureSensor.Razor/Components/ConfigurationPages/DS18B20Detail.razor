@@ -4,32 +4,30 @@
 @using MudBlazor
 @attribute [ViewOfAttribute("DS18B20 détail view", typeof(DS18B20), typeof(DS18B20Detail), ViewContext.Detail)]
 
-<MudText Typo="Typo.h3">DS18B20 temperature Sensor</MudText>
-<MudText Typo="Typo.h5">@_component.InstanceName</MudText>
 <MudGrid>
     <MudItem xs="12" style="display: flex;">
         <MudText style="flex: 1;" Typo="Typo.h6">Temperature</MudText>
-        <MudText style="flex: 1;" Typo="Typo.body1">@_component.Measures[(int)_component.TemperatureType].Value @_component.Measures[(int)_component.TemperatureType].Unit</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.Measures[(int)Component.TemperatureType].Value @Component.Measures[(int)Component.TemperatureType].Unit</MudText>
     </MudItem>
 
     <MudItem xs="12" style="display: flex;">
         <MudText style="flex: 1;" Typo="Typo.h6">Time</MudText>
-        <MudText style="flex: 1;" Typo="Typo.body1">@_component.LastExecution.ToString("hh.mm.ss")</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.LastExecution.ToString("hh.mm.ss")</MudText>
     </MudItem>
 
     <MudItem xs="12" style="display: flex;">
         <MudText style="flex: 1;" Typo="Typo.h6">Read frequency</MudText>
-        <MudText style="flex: 1;" Typo="Typo.body1">@_component.Period.Seconds sec.</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.Period.Seconds sec.</MudText>
     </MudItem>
 
     <MudItem xs="12" style="display: flex;">
         <MudText style="flex: 1;" Typo="Typo.h6">Is interfered</MudText>
-        <MudText style="flex: 1;" Typo="Typo.body1">@_component.IsInterfered</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.IsInterfered</MudText>
     </MudItem>
 
     <MudItem xs="12" style="display: flex;">
         <MudText style="flex: 1;" Typo="Typo.h6">Bus address</MudText>
-        <MudText style="flex: 1;" Typo="Typo.body1">@_component.Address</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.Address</MudText>
     </MudItem>
 </MudGrid>
 
@@ -41,14 +39,13 @@
 
 @code {
 
-    [Parameter] public DS18B20? Component { get; set; }
-    private DS18B20 _component = new();
+    [Parameter] public DS18B20 Component { get; set; } =null!;
+
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         ArgumentNullException.ThrowIfNull(Component);
-        _component = Component;
     }
 
 }
