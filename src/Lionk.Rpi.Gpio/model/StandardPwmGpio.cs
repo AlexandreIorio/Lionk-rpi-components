@@ -10,7 +10,7 @@ public abstract class StandardPwmGpio : Gpio, IPwmChannel
     #region Private Fields
 
     private double _dutyCycle;
-    private int _frequency = 400;
+    private int _frequency = 500;
     private Rpi4Gpio _pin = Rpi4Gpio.None;
     private bool _pwmOn;
 
