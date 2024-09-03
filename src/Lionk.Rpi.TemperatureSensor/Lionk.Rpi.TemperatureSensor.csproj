@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lionk\src\Lib\Lionk.Core.Razor\Lionk.Core.Razor.csproj" />
-    <ProjectReference Include="..\..\Lionk\src\Lib\Lionk.Core\Lionk.Core.csproj" />
+    <PackageReference Include="Lionk.Core" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

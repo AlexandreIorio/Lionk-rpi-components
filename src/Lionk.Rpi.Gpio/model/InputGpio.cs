@@ -1,6 +1,5 @@
 ﻿// Copyright © 2024 Lionk Project
 
-using System.ComponentModel.DataAnnotations;
 using System.Device.Gpio;
 using Lionk.Core;
 using Lionk.Core.DataModel;
