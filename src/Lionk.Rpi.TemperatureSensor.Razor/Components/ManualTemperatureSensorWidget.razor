@@ -1,0 +1,34 @@
+﻿@using Lionk.Core.Component
+@using Lionk.Core.View
+@using MudBlazor
+@namespace Lionk.TemperatureSensor
+@attribute [ViewOfAttribute("Manual temperature sensor", typeof(ManualTemperatureSensor), typeof(ManualTemperatureSensorWidget), ViewContext.Widget)]
+
+<MudText Typo="Typo.h6">Temperature: @Component.GetTemperatureString()</MudText>
+<MudButton OnClick="PlusClick">+</MudButton>
+<MudButton OnClick="MinusClic">-</MudButton>
+<MudTextField T="double" Label="Threshold" @bind-Value="Threshold"/>
+
+@code {
+
+    [Parameter] public ManualTemperatureSensor Component { get; set; } = null!;
+
+    private double Threshold { get; set; } = 1.0;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ArgumentNullException.ThrowIfNull(Component);
+    }
+
+    private void PlusClick()
+    {
+        Component.Temperature += Threshold;
+    }
+
+    private void MinusClic()
+    {
+        Component.Temperature -= Threshold;
+    }
+
+}

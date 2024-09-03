@@ -1,0 +1,23 @@
+﻿@page "/"
+@using MudBlazor
+@using Lionk.Rpi.Gpio.View
+@rendermode InteractiveServer
+
+<h3>Home</h3>
+<MudButton OnClick="Plus">+1%</MudButton>
+<MudButton OnClick="Minus">-1%</MudButton>
+
+@code {
+    private double _dutyCycle = 0.5;
+    private void Plus()
+    {
+        _dutyCycle = Math.Min(_dutyCycle + 0.01, 1.0);
+        StateHasChanged();
+    }
+
+    private void Minus()
+    {
+        _dutyCycle = Math.Max(_dutyCycle - 0.01, 0.0);
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,31 @@
+﻿@using Lionk.Core.View
+@using MudBlazor
+@using Lionk.Core.Component
+@using Lionk.Core.Component.Cyclic;
+@namespace Lionk.Rpi.Gpio.View
+@attribute [ViewOfAttribute("Gpio Configuration", typeof(StandardIOGpio), typeof(StandardGpioConfig), ViewContext.Configuration)]
+
+
+<MudSelect Label="GPIO" T="Rpi.Gpio.Rpi4Gpio" @bind-Value="_pin" >
+    @foreach (var pin in Enum.GetValues(typeof(Rpi4Gpio)).Cast<Rpi.Gpio.Rpi4Gpio>())
+    {
+        <MudSelectItem Value="@pin">@pin</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    [Parameter] public StandardIOGpio? Component { get; set; }
+
+    private Rpi4Gpio _pin
+    {
+        get => Component?.Pin ?? Rpi4Gpio.None;
+        set
+        {
+            if (Component != null)
+            {
+                Component.Pin = value;
+            }
+        }
+    }
+
+}

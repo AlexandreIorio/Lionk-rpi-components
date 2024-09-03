@@ -1,0 +1,54 @@
+@using Lionk.Core
+@using Lionk.Core.Model.Component
+@using Lionk.Core.View
+@using Lionk.TemperatureSensor
+@using Lionk.Core.Component
+@using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@namespace Lionk.TemperatureSensor
+@attribute [ViewOfAttribute("Simple temperature widget", typeof(BaseTemperatureSensor), typeof(TemperatureSensorWidget), ViewContext.Widget)]
+
+@if (Component is null)
+{
+    <MudText Typo="Typo.body1" Class="text-center">No sensor found</MudText>
+}
+else
+{
+    if (Component is BaseTemperatureSensor sensor)
+    {
+        <MudText Typo="Typo.h6" Class="bi bi-thermometer-half text-center">@sensor.InstanceName</MudText>
+        <MudText Typo="Typo.body1">@GetTemperature()</MudText>
+        <MudText Typo="Typo.body1"> Last read @GetTime()</MudText>
+    }
+}
+
+@code {
+
+    [Parameter] public BaseTemperatureSensor? Component { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Component is not null && Component is BaseTemperatureSensor sensor)
+        {
+            sensor.NewValueAvailable += (sender, e) => InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private string GetTemperature(int roundDecimal = 2)
+    {
+        if (Component is null) return "No data";
+        double value = Component?.GetTemperature() ?? double.NaN;
+        string unit = Component?.GetUnit() ?? string.Empty;
+        string temperature = value == double.NaN ? "No data" : value + " " + unit;
+        return temperature;
+    }
+
+    private string GetTime()
+    {
+        if (Component is null) return "No data";
+
+        return Component.GetTime().ToString("dd.MM.yyyy HH:mm:ss");
+    }
+}

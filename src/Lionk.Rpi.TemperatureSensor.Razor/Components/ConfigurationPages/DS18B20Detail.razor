@@ -1,0 +1,51 @@
+﻿@using Lionk.Core.Component
+@using Lionk.Core.View
+@using Lionk.TemperatureSensor
+@using MudBlazor
+@attribute [ViewOfAttribute("DS18B20 détail view", typeof(DS18B20), typeof(DS18B20Detail), ViewContext.Detail)]
+
+<MudGrid>
+    <MudItem xs="12" style="display: flex;">
+        <MudText style="flex: 1;" Typo="Typo.h6">Temperature</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.Measures[(int)Component.TemperatureType].Value @Component.Measures[(int)Component.TemperatureType].Unit</MudText>
+    </MudItem>
+
+    <MudItem xs="12" style="display: flex;">
+        <MudText style="flex: 1;" Typo="Typo.h6">Time</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.LastExecution.ToString("hh.mm.ss")</MudText>
+    </MudItem>
+
+    <MudItem xs="12" style="display: flex;">
+        <MudText style="flex: 1;" Typo="Typo.h6">Read frequency</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.Period.Seconds sec.</MudText>
+    </MudItem>
+
+    <MudItem xs="12" style="display: flex;">
+        <MudText style="flex: 1;" Typo="Typo.h6">Is interfered</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.IsInterfered</MudText>
+    </MudItem>
+
+    <MudItem xs="12" style="display: flex;">
+        <MudText style="flex: 1;" Typo="Typo.h6">Bus address</MudText>
+        <MudText style="flex: 1;" Typo="Typo.body1">@Component.Address</MudText>
+    </MudItem>
+</MudGrid>
+
+
+
+
+
+
+
+@code {
+
+    [Parameter] public DS18B20 Component { get; set; } =null!;
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ArgumentNullException.ThrowIfNull(Component);
+    }
+
+}

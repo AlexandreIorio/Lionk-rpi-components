@@ -1,0 +1,57 @@
+﻿@using Lionk.Core.Component
+@using Lionk.Core.DataModel
+@using Lionk.Core.View
+@using MudBlazor
+@using Lionk.Core
+@namespace Lionk.Rpi.Gpio.View
+@attribute [ViewOfAttribute("Standard I/O gpio on Rpi 4", typeof(StandardIOGpio), typeof(StandardGpioWidget), ViewContext.Widget)]
+
+@if (Component is null)
+{
+    <MudText Typo="Typo.body1" >No Gpio found</MudText>
+}
+else
+{
+    @if (_value > 0)
+    {
+        <MudChip T="string" Color="Color.Success">Active</MudChip>
+    }
+    else
+    {
+        <MudChip T="string" Color="Color.Dark">Inactive</MudChip>
+    }
+
+    Color color = Component.Pin is Rpi4Gpio.None ? Color.Warning : Color.Success;
+
+    <MudChip Color="color" T="string">@Component.Pin.ToString()</MudChip>
+}
+
+
+@code {
+    private int _value = 0;
+
+    [Parameter] public StandardIOGpio? Component { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Component != null)
+        {
+            Component.NewValueAvailable += GpioNewValueAvailable;
+            Component.PropertyChanged += OnPropertyChange;
+        }
+    }
+
+    private void OnPropertyChange(object? sender, EventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void GpioNewValueAvailable(object? sender, MeasureEventArgs<int> e)
+    {
+        if (e is null) return;
+
+        _value = e.Measures.First().Value;
+        InvokeAsync(StateHasChanged);
+    }
+}

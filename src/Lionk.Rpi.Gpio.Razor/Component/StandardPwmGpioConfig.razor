@@ -1,0 +1,36 @@
+﻿@namespace Lionk.Rpi.Gpio.View
+@using Lionk.Core.View
+@using Lionk.Rpi.Gpio
+@using MudBlazor
+@attribute [ViewOfAttribute("Pwm Gpio Configuration", typeof(StandardPwmGpio), typeof(StandardPwmGpioConfig), ViewContext.Configuration)]
+
+<MudSelect Label="GPIO" T="Rpi.Gpio.Rpi4Gpio" @bind-value="Component.Pin">
+    @foreach (var pin in _pwmGpio)
+    {
+        <MudSelectItem Value="@pin">@pin</MudSelectItem>
+    }
+</MudSelect>
+
+<MudTextField Label="Frequency" @bind-Value=" Component.Frequency" T="int" />
+<MudTextField Label="DutyCycle %" @bind-Value="_dutyCycle" T="int" />
+<MudSwitch Label="Enable" @bind-Value="Component.PwmOn" />
+
+@code {
+
+    [Parameter] public StandardPwmGpio Component { get; set; } = null!;
+
+    private List<Rpi4Gpio> _pwmGpio = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Component == null) throw new ArgumentNullException(nameof(Component));
+        _pwmGpio = Enum.GetValues(typeof(Rpi4Gpio)).Cast<Rpi.Gpio.Rpi4Gpio>().Where(g => g.Is(GpioType.PWM)).ToList();
+    }
+
+    private int _dutyCycle
+    {
+        get => (int)(Component.DutyCycle * 100);
+        set => Component.DutyCycle = (double)value / 100;
+    }
+}
