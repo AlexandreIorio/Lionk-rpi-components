@@ -29,7 +29,15 @@ public class Rpi4PwmGpio : StandardPwmGpio
         set
         {
             base.Pin = value;
-            _pwmChannel = PwmChannel.Create(base.Pin.PwmChip(), base.Pin.PwmChannel(), Frequency, DutyCycle);
+            try
+            {
+                Console.WriteLine("Creating the PWM channel");
+                _pwmChannel = PwmChannel.Create(base.Pin.PwmChip(), base.Pin.PwmChannel(), Frequency, DutyCycle);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + " Error while creating the PWM channel");
+            }
         }
     }
 
