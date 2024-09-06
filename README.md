@@ -1,8 +1,8 @@
-# Lionk Plugin - DS18B20 for Raspberry Pi
+# Lionk Plugin - Temperature sensor (DS18B20) for Raspberry Pi
 
 ## Overview
 
-This repository contains a plugin for the **Lionk** framework designed to interface with DS18B20 temperature sensors on a Raspberry Pi. The plugin allows for seamless integration of DS18B20 sensors into the Lionk ecosystem, enabling real-time temperature monitoring and data processing within your Lionk-based application.
+This repository contains plugins for the **Lionk** framework designed to interface with DS18B20 temperature sensors on a Raspberry Pi. The plugin allows for seamless integration of DS18B20 sensors into the Lionk ecosystem, enabling real-time temperature monitoring and data processing within your Lionk-based application.
 
 ## Features
 
@@ -19,7 +19,7 @@ This repository contains a plugin for the **Lionk** framework designed to interf
 ## Installation
 
 1. **Connect the DS18B20 Sensor** to your Raspberry Pi's GPIO pins according to the sensor's datasheet.
-2. **Clone this repository** to your Raspberry Pi:
+2. **Clone this repository** to your Raspberry Pi or directly download compiled plugins from the last release:
    ```bash
    git clone https://github.com/Lionk-Framework/Lionk-plugin-rpi-ds18b20.git
    ```
@@ -29,13 +29,12 @@ This repository contains a plugin for the **Lionk** framework designed to interf
    dotnet build
    ```
 4. **Deploy the Plugin**:
-   - Copy the generated DLL to the plugins directory of your Lionk installation.
-   - Restart the Lionk service to load the new plugin.
+   - Add the attached plugins to your application.
 
 ## Configuration
 
 1. Access the Lionk web interface.
-2. Navigate to the Plugins section and locate the DS18B20 plugin.
+2. Navigate to the Plugins section and locate the component you want to add.
 3. Configure the sensor reading intervals.
 4. Save the configuration and start monitoring.
 
