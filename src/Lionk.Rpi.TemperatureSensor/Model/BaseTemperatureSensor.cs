@@ -12,6 +12,11 @@ public abstract class BaseTemperatureSensor : BaseCyclicComponent, IMeasurableCo
 {
     private TemperatureType _temperatureType = TemperatureType.Celsius;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the sensor is busy.
+    /// </summary>
+    protected bool IsBusy { get; set; } = false;
+
     /// <inheritdoc/>
     public List<Measure<double>> Measures { get; } =
     [

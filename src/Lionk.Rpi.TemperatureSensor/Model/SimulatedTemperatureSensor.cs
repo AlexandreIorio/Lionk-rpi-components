@@ -13,12 +13,24 @@ namespace Lionk.TemperatureSensor;
 public class SimulatedTemperatureSensor : BaseTemperatureSensor
 {
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("SimulatedTemperatureSensor");
+    private readonly object _mutex = new();
     private readonly Random _random = new();
+
+    private int _busyDurations = 700; // ms
 
     #region Observable Properties
 
     private double _maxSimulatedTemperature = 20;
     private double _minSimulatedTemperature = 5;
+
+    /// <summary>
+    /// Gets or sets the busy simulation value.
+    /// </summary>
+    public int BusyDuration
+    {
+        get => _busyDurations;
+        set => SetField(ref _busyDurations, value);
+    }
 
     /// <summary>
     /// Gets or sets the maximum simulated temperature.
@@ -46,6 +58,19 @@ public class SimulatedTemperatureSensor : BaseTemperatureSensor
     /// <inheritdoc/>
     public override void Measure()
     {
+        if (!IsBusy)
+        {
+            lock (_mutex)
+            {
+                IsBusy = true;
+                var thread = new Thread(MeasureAction);
+                thread.Start();
+            }
+        }
+    }
+
+    private void MeasureAction()
+    {
         base.Measure();
 
         // Simulate a temperature value between MinSimulatedTemperature and MaxSimulatedTemperature
@@ -55,6 +80,7 @@ public class SimulatedTemperatureSensor : BaseTemperatureSensor
             + _minSimulatedTemperature;
 
         SetTemperature(simulatedTemperature);
+        IsBusy = false;
     }
 
     /// <summary>

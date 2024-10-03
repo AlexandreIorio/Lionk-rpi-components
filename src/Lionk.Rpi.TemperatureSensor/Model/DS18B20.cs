@@ -1,5 +1,6 @@
 ﻿// Copyright © 2024 Lionk Project
 
+using System.Threading;
 using Lionk.Core;
 using Lionk.Core.DataModel;
 using Lionk.Log;
@@ -15,7 +16,7 @@ public class DS18B20 : BaseTemperatureSensor
     private static readonly string _path = "/sys/bus/w1/devices/";
     private static readonly string _sensorPattern = "28-";
     private static readonly IStandardLogger? _logger = LogService.CreateLogger("DS18B20");
-
+    private readonly object _mutex = new();
     #region Observable Properties
 
     private string _address = string.Empty;
@@ -78,6 +79,19 @@ public class DS18B20 : BaseTemperatureSensor
     /// <inheritdoc/>
     public override void Measure()
     {
+        if (!IsBusy)
+        {
+            lock (_mutex)
+            {
+                IsBusy = true;
+                var thread = new Thread(MeasureAction);
+                thread.Start();
+            }
+        }
+    }
+
+    private void MeasureAction()
+    {
         base.Measure();
         if (!Exists)
         {
@@ -100,6 +114,7 @@ public class DS18B20 : BaseTemperatureSensor
         string tempData = lines[1].Split('=')[1];
         SetTemperature(Convert.ToDouble(tempData) / 1000.0);
         IsInterfered = false;
+        IsBusy = false;
     }
 
     /// <summary>
