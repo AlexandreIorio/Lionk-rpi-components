@@ -79,6 +79,7 @@ public class SimulatedTemperatureSensor : BaseTemperatureSensor
             * (_maxSimulatedTemperature - _minSimulatedTemperature))
             + _minSimulatedTemperature;
 
+        Thread.Sleep(BusyDuration);
         SetTemperature(simulatedTemperature);
         IsBusy = false;
     }
